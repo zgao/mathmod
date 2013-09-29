@@ -17,5 +17,11 @@ Plus, since there aren't going to be many walls, the exterior walls will be most
 
 Second, this is mostly directed towards MGao, we need to make sure the doors aren't blocked off by external walls. So included in the death check should be that we should have a path from one door to the other. 
 
+Also, for the death check, I reread the problem spec and Parallel walls are not allowed to be within 5 meters of eachother. So we simply check to see for every corner if there is a corner less than 5 meters from it. That makes it easy. So much easier than intersection checking.
+
+I added some of the stuff for deallocating individuals, someone needs to write the death check and the generation of the random individual. Maybe me. 
+
 Put your code in a .c file with its function prototypes and data structures in a .h file, making sure to use include gaurds. 
 (i.e. http://stackoverflow.com/questions/5128664/how-to-split-a-c-program-into-multiple-files) 
+
+-Sam 
