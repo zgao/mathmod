@@ -1,5 +1,6 @@
 #ifndef ARRANGEMENT_H_ADDED
 #define ARRANGEMENT_H_ADDED
+#include <stdbool.h>
 
 typedef struct wall{
 	int x_pos; //define x position of the initial point of the wall
@@ -18,3 +19,10 @@ typedef struct arrangement{
 	wallList* walls;
 	int cameraPattern; // we have a finite number of camera patterns we're testing
 } arrangement;
+
+bool isAllowable(wallList *x);
+void freeArrangement(arrangement *x);
+arrangement* createRandomArrangement();
+void freeWall(wall *x);
+
+#endif
