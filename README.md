@@ -17,7 +17,8 @@ Plus, since there aren't going to be many walls, the exterior walls will be most
 
 Second, this is mostly directed towards MGao, we need to make sure the doors aren't blocked off by external walls. So included in the death check should be that we should have a path from one door to the other. 
 
-Also, for the death check, I reread the problem spec and Parallel walls are not allowed to be within 5 meters of eachother. So we simply check to see for every corner if there is a corner less than 5 meters from it. That makes it easy. So much easier than intersection checking.
+Also, for the death check, I reread the problem spec and Parallel walls are not allowed to be within 5 (or 4.99999 because floats) meters of eachother.
+So we simply check to see for every corner if there is a corner less than 5 meters from it. That makes it easy. So much eaier than intersection checking. It also accounts for if a wall is close but not remotely "parallel" (imagine two circles of radius 5m around each endpoint of a wall. 
 
 I added some of the stuff for deallocating individuals, someone needs to write the death check and the generation of the random individual. Maybe me. 
 
