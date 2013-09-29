@@ -25,4 +25,6 @@ I added some of the stuff for deallocating individuals, someone needs to write t
 Put your code in a .c file with its function prototypes and data structures in a .h file, making sure to use include gaurds. 
 (i.e. http://stackoverflow.com/questions/5128664/how-to-split-a-c-program-into-multiple-files) 
 
+
+Also, we don't consider tree-like walls. So each wall is only connected to at most one other on each end. This makes computation a LOT simpler, and also, having a 3 way wall necessarily creates deadspots (unless the wall is pointing exactly at the camera, but in reality that is actually just 2 dead spots, because you can't see the front of either painting). 
 -Sam 
