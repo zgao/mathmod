@@ -6,9 +6,9 @@ bool isAllowable(wallList *x){
 }
 
 void freeArrangement(arrangement *x){
-	current = x -> walls;
+	wallList *current = x -> walls;
 	while (current != NULL) {
-		temp = current;
+		wallList *temp = current;
 		freeWall(current -> value);
 		current = current -> next;
 		free(temp);
@@ -16,9 +16,9 @@ void freeArrangement(arrangement *x){
 }
 
 void freeWall(wall *x){
-	current = x;
+	wall *current = x;
 	while (current != NULL) {
-		temp = current;
+		wall *temp = current;
 		current = current -> child;
 		free(temp);
 	}

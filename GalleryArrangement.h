@@ -3,9 +3,9 @@
 #include <stdbool.h>
 
 typedef struct wall{
-	int x_pos; //define x position of the initial point of the wall
-	int y_pos;
-	int angle; //angle from 0 to 180 of the child, with 0 directly up
+	double x_pos; //define x position of the initial point of the wall
+	double y_pos;
+	double angle; //angle from 0 to 180 of the child, with 0 directly up
         struct wall* child; 
 } wall;
 
