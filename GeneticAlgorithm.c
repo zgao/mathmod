@@ -23,6 +23,27 @@ void weightedSort(arrangement **array, double *weights, int left, int right);
 int  wsSeparate(arrangement **array, double *weights, int left, int right, int pivot);
 void swapArr(arrangement **array, int a, int b);
 void swapDoub(double *array, int a, int b);
+void printWall(wall *x);
+
+void printWall(wall *x) {
+	if (x == NULL) {
+		return;
+	}
+	printf("(%f,%f) -> ", x -> x_pos, x -> y_pos);
+	printWall(x -> child);
+}
+
+void printArrangement(arrangement *x) {
+	printf("ARRANGEMENT:\n");
+	printf("Camera pattern:%d\n", x -> cameraPattern);
+	wallList *it = x -> walls;
+	printf("Defined IT");
+	while(it != NULL) {
+		printWall(it -> value);
+		printf("\n");
+		it = it -> next;
+	}
+}
 
 void swapArr(arrangement **array, int a, int b) {
 	arrangement *t = array[a];

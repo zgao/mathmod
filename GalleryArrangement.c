@@ -78,6 +78,7 @@ arrangement* createRandomArrangement() {
 	int numberOfWalls = 1 + (rand() % 5);
 	int i;
 	wallList *add;
+	wallList *t = add;
 	wallList *previous = NULL;
 	for(i=0;i<numberOfWalls;i++) {
 		add = malloc(sizeof(wallList));
@@ -88,6 +89,7 @@ arrangement* createRandomArrangement() {
 		}
 		previous = add;
 	}
+	out -> walls = t;
 	return out;
 }
 
