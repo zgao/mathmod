@@ -5,7 +5,7 @@
 typedef struct wall{
 	double x_pos; //define x position of the initial point of the wall
 	double y_pos;
-	double angle; //angle from 0 to 180 of the child, with 0 directly up
+	double angle; //angle from 0 to pi of the wall, with 0 directly up
         struct wall* child; 
 } wall;
 
@@ -24,5 +24,9 @@ bool isAllowable(wallList *x);
 void freeArrangement(arrangement *x);
 arrangement* createRandomArrangement();
 void freeWall(wall *x);
+int wallLength(wall *x);
+int numberOfWalls(arrangement *x);
+bool intersect(wall *x, wall *y);
+void free2dArray(double **x, int length);
 
 #endif
