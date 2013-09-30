@@ -37,7 +37,6 @@ void printArrangement(arrangement *x) {
 	printf("ARRANGEMENT:\n");
 	printf("Camera pattern:%d\n", x -> cameraPattern);
 	wallList *it = x -> walls;
-	printf("Defined IT");
 	while(it != NULL) {
 		printWall(it -> value);
 		printf("\n");

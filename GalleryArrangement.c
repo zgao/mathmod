@@ -77,19 +77,20 @@ arrangement* createRandomArrangement() {
 	out -> cameraPattern = (int)rand() % 4;
 	int numberOfWalls = 1 + (rand() % 5);
 	int i;
-	wallList *add;
-	wallList *t = add;
-	wallList *previous = NULL;
-	for(i=0;i<numberOfWalls;i++) {
-		add = malloc(sizeof(wallList));
-		add -> value = randomWall(1 + rand() % 4, 22.0* (double)rand()/(double)RAND_MAX,20.0*(double)rand()/(double)RAND_MAX , 0.0);
-		add -> next = NULL;
+	wallList *add = malloc(sizeof(wallList));
+	add -> value = randomWall(1 + rand() % 4, 22.0* (double)rand()/(double)RAND_MAX,20.0*(double)rand()/(double)RAND_MAX , 0.0);
+	add -> next = NULL;
+	wallList *previous = add;
+	for(i=0;i<numberOfWalls - 1;i++) {
+		wallList *t = malloc(sizeof(wallList));
+		t -> value = randomWall(1 + rand() % 4, 22.0* (double)rand()/(double)RAND_MAX,20.0*(double)rand()/(double)RAND_MAX , 0.0);
+		t -> next = NULL;
 		if (previous != NULL) {
-			previous -> next = add;
+			previous -> next = t;
 		}
-		previous = add;
+		previous = t;
 	}
-	out -> walls = t;
+	out -> walls = add;
 	return out;
 }
 
