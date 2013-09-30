@@ -12,6 +12,7 @@
 double BoxMuller(); //returns standard normal random number
 wall* changeWall(wall *x);
 
+
 double BoxMuller() {
 	double u = (double)rand() / (double)RAND_MAX;
 	double v = (double)rand() / (double)RAND_MAX;
@@ -25,21 +26,24 @@ wall* changeWall(wall *x) {
 		double theta = (double)rand() / (double)RAND_MAX * M_PI;
 		out -> child = x;
 		out -> angle = theta;
-		out -> x_pos = x -> x_pos - 5.0*sin(theta);
-		out -> y_pos = x -> y_pos - 5.0*cos(theta);
+		out -> x_pos = x -> x_pos - 5.0*sin(M_PI_2+theta);
+		out -> y_pos = x -> y_pos - 5.0*cos(M_PI_2+theta);
+		x -> angle -= (M_PI_2 - theta);
 		return out;
 	} else if (c <= WALL_PROBABILITY_TO_MUTATE) {
 		double theta = (double)rand() / (double)RAND_MAX * M_PI;
 		wall *new = malloc(sizeof(wall));
 		wall *last = x;
+		double vAngle = M_PI_2;
 		while ( last -> child != NULL) {
+			vAngle += (last -> angle) - M_PI_2;
 			last = last -> child;
 		}
 		new -> child = NULL;
 		last -> child = new;
 		new -> angle = theta;
-		new -> x_pos = last -> x_pos + 5.0*(sin(last -> angle));
-		new -> y_pos = last -> y_pos + 5.0*(cos(last -> angle));
+		new -> x_pos = last -> x_pos + 5.0*(sin(vAngle));
+		new -> y_pos = last -> y_pos + 5.0*(cos(vAngle));
 		return x;
 	}
 	return x;
