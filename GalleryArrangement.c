@@ -4,6 +4,7 @@
 #include <math.h>
 
 wall*  randomWall(int length, double startx, double startyi, double angleOffset);
+void appendTo(wall *datum, wallList *x);
 
 bool isAllowable(wallList *x){
 	return true;
@@ -28,6 +29,26 @@ void freeWall(wall *x){
 		free(temp);
 	}
 	return;
+}
+
+void appendTo(wall *datum, wallList *x) {
+	if ( datum == NULL) {
+		return;
+	}
+	if (x -> value == NULL) {
+		x -> value = datum;
+		return;
+	} else {
+		wallList *last = x;
+		while(last -> next != NULL) {
+			last = last -> next;
+		}
+		wallList *add = malloc(sizeof(wallList)); 
+		add -> value = datum;
+		add -> next = NULL;
+		last -> next = add;
+		return;
+	}
 }
 
 wall* randomWall(int length, double startx, double starty, double angleOffset) {  //angleOffset is the angle subtracted from out -> angle to get the angle with respect to the vertical

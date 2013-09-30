@@ -9,9 +9,29 @@
 #include <stdlib.h>
 #include <math.h>
 
+typedef struct {
+	double x;
+	double y;
+} point;
+
 double BoxMuller(); //returns standard normal random number
 wall* changeWall(wall *x);
+point centerOfMass(wall *x);
+int quadrant(point a);
 
+
+point centerOfMass(wall *x) {
+	int len = wallLength(x) + 1;
+	double sumx = 0;
+	double sumy = 0;
+	wall *curr = x;
+	while(curr != NULL) {
+		sumx += curr -> x_pos;
+		sumy += curr -> y_pos;
+		curr = curr -> child;
+	}
+	return (point) {sumx/ (double) len, sumy / (double) len};
+}
 
 double BoxMuller() {
 	double u = (double)rand() / (double)RAND_MAX;
@@ -90,3 +110,85 @@ void mutate(arrangement *x){
 		current = current -> next;
 	}
 }
+
+int quadrant(point a) {
+	if ( (a.x <= 11) && (a.y <= 10) ) {
+		return 0;
+	} else if ( (a.x > 11) && (a.y <= 10) ){
+		return 1;
+	} else if ((a.x <= 11) && (a.y > 10) ) {
+		return 2;
+	} else {
+		return 3;
+	}
+}
+
+arrangement* combine(arrangement *dad, arrangement *mom) {
+	arrangement *out;
+	if ((double)rand() / RAND_MAX < 0.5) {
+		out -> cameraPattern = dad -> cameraPattern;
+	} else {
+		out -> cameraPattern = mom -> cameraPattern;
+	}
+	out -> walls = malloc(sizeof(wallList));
+	(out -> walls) -> value = NULL;
+	(out -> walls) -> next = NULL;
+	wallList *quadrants[4]; 
+	int i;
+	for ( i = 0; i < 4; i ++) {
+		quadrants[i] = malloc(2*sizeof(wallList));
+		quadrants[i][0].value =  NULL;
+		quadrants[i][0].next = NULL;
+		quadrants[i][1].value =  NULL;
+		quadrants[i][1].next = NULL;
+	}
+	wallList *elemD = dad -> walls;
+	wallList *elemM = mom -> walls;
+	int q;
+	while(elemD != NULL) {
+		q = quadrant(centerOfMass(elemD -> value));
+		appendTo(elemD -> value, &quadrants[q][0]);
+		elemD = elemD -> next;
+	}
+	while(elemM != NULL) {
+		q = quadrant(centerOfMass(elemM -> value));
+		appendTo(elemM -> value, &quadrants[q][1]);
+		elemM = elemM -> next;
+	}
+	for (i=0;i<4;i++) {  //need to add quadranty things to the combined one
+		wallList *iterD = &quadrants[i][0];
+		wallList *iterM = &quadrants[i][1];
+		while(iterD != NULL && iterM != NULL) {
+			if ((double)rand()/(double)RAND_MAX < 0.5) {
+				appendTo(iterD -> value, out -> walls);
+			} else {
+				appendTo(iterM -> value, out -> walls);
+			}
+			iterD = iterD -> next;
+			iterM = iterM -> next;
+		}
+		while(iterD != NULL) {
+			if ((double)rand()/(double)RAND_MAX < 0.5) {
+				appendTo(iterD -> value, out -> walls);
+				iterD = iterD -> next;
+			}
+			if ((double)rand()/(double)RAND_MAX < 0.5) {
+				appendTo(iterM -> value, out -> walls);
+				iterM = iterM -> next;
+			}
+		}
+		wallList * current = &quadrants[i][0];
+		while (current != NULL) {
+			wallList *temp = current;
+			current = current -> next;
+			free(temp);
+		}
+		current = &quadrants[i][1];
+		while (current != NULL) {
+			wallList *temp = current;
+			current = current -> next;
+			free(temp);
+		}
+	}
+	return out;
+}	

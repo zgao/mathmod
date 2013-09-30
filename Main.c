@@ -3,6 +3,8 @@
 #include <stdio.h>
 
 int main(void) {
-	printf("compiles!\n");
+	arrangement *a = createRandomArrangement();
+	mutate(a);
+	freeArrangement(a);
 	return 0;
 }
