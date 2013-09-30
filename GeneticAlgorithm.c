@@ -18,7 +18,64 @@ double BoxMuller(); //returns standard normal random number
 wall* changeWall(wall *x);
 point centerOfMass(wall *x);
 int quadrant(point a);
+void shuffle(arrangement **array, int n);
+void weightedSort(arrangement **array, double *weights, int left, int right);
+int  wsSeparate(arrangement **array, double *weights, int left, int right, int pivot);
+void swapArr(arrangement **array, int a, int b);
+void swapDoub(double *array, int a, int b);
 
+void swapArr(arrangement **array, int a, int b) {
+	arrangement *t = array[a];
+	array[a] = array[b];
+	array[b] = t;
+}
+
+void swapDoub(double *array, int a, int b) {
+	double t = array[a];
+	array[a] = array[b];
+	array[b] = t;
+}
+
+int wsSeparate(arrangement **array, double *weights, int left, int right, int pivot) {
+	double pivValue = weights[pivot];
+	swapArr(array, pivot, right);
+	swapDoub(weights, pivot, right);
+	int tempIndex = left;
+	int i;
+	for(i = left; i < right; i++) {
+		if (weights[i] > pivValue) {
+			swapArr(array, i, tempIndex);
+			swapDoub(weights, i, tempIndex);
+			tempIndex ++;
+		}
+	}
+	swapArr(array,tempIndex,right);
+	swapDoub(weights, tempIndex, right );
+}
+
+
+void weightedSort(arrangement **array, double *weights, int left, int right) {
+	if ( left < right) {
+		int piv = left+right / 2;
+		int newPiv = wsSeparate(array, weights, left, right, piv);
+		weightedSort(array, weights, left, newPiv-1);
+		weightedSort(array, weights, newPiv + 1, right);
+	}	
+}
+
+void shuffle(arrangement **array, int n) {
+	if ( n > 1 ) {
+		int i;
+		arrangement *t;
+		for (i = 0; i < n-1; i++) {
+			int j = i + rand() / (RAND_MAX / (n-1) + 1);
+			t = array[i];
+			array[i] = array[j];
+			array[j] = t;
+		}
+	}
+	return;
+}
 
 point centerOfMass(wall *x) {
 	int len = wallLength(x) + 1;
@@ -172,6 +229,8 @@ arrangement* combine(arrangement *dad, arrangement *mom) {
 				appendTo(iterD -> value, out -> walls);
 				iterD = iterD -> next;
 			}
+		}
+		while(iterM != NULL) {
 			if ((double)rand()/(double)RAND_MAX < 0.5) {
 				appendTo(iterM -> value, out -> walls);
 				iterM = iterM -> next;
@@ -190,5 +249,71 @@ arrangement* combine(arrangement *dad, arrangement *mom) {
 			free(temp);
 		}
 	}
+	return out;
+}	
+
+arrangement** stochasticUniversalSample(arrangement **population, double *accumFitness, int length, int keep) {
+	double fitness = accumFitness[length-1];
+	double dist = fitness/(double)keep;
+	double start = dist * ((double)rand() / (double) RAND_MAX);
+	double *points = malloc(keep*sizeof(double));
+	int i;
+	for(i=0;i<keep;i++) {
+		points[i] = start + i*dist;
+	}
+	return rouletteWheelSelection(population, accumFitness, points, length, keep);
+}
+
+arrangement** rouletteWheelSelection(arrangement **population, double* accumFitness, double *points, int popLen, int ptsLen) {
+	arrangement **out = malloc(ptsLen*sizeof(arrangement *));
+	int i = 0;
+	int j = 0;
+	for(i=0;i<ptsLen;i++) {
+		while(accumFitness[j] < points[i]) {
+			j++;
+		}
+		out[i] = population[j];
+	}
+	free(points);
+	return out;
+}
+
+arrangement** generate(arrangement **previous, int length, float mutationRate, int elitism, double (*fitnessp)(arrangement*)) {
+	double *fitnesses = malloc(length*sizeof(double));
+	arrangement **out = malloc(length*sizeof(arrangement*));
+	int i;
+	for(i = 0; i < length; i++) {
+		fitnesses[i] = (*fitnessp)(previous[i]);
+	}
+	weightedSort(previous, fitnesses, 0, length - 1);
+	int j = 0;
+	for(i = length - 1; i > 0 ; i --) {
+		for (j = i + 1; j < length ; j++) {
+			fitnesses [j] += fitnesses[i];
+		}
+	}
+	int parentPop = 2*(length - elitism);
+	arrangement **parents = stochasticUniversalSample(previous, fitnesses, length, parentPop);
+	shuffle(parents, parentPop);
+	for(i = 0; i < elitism; i++) {
+		out[i] = previous[i];
+	}
+	int pindex;
+	for(i = elitism; i < length; i++ ) {
+		pindex = 2*(i-elitism);
+		out[i] = combine(parents[pindex], parents[pindex+1]);
+		if((double)rand()/(double)RAND_MAX < mutationRate) {
+			mutate(out[i]);
+		}
+	}
+	free(fitnesses);
+	for(i = 0; i< parentPop; i++) {
+		freeArrangement(parents[i]);
+	}
+	free(parents);
+	for(i = elitism; i< length; i++) {
+		freeArrangement(previous[i]);
+	}
+	free(previous);
 	return out;
 }	
