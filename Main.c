@@ -7,13 +7,12 @@
 int main(void) {
 	srand(time(NULL));
 	arrangement *a = createRandomArrangement();
+	arrangement *b = createRandomArrangement();
 	printArrangement(a);
-	int i;
-	mutate(a);
-	printArrangement(a);
+	printArrangement(b);
+	printArrangement(combine(a,b));
 	freeArrangement(a);
+	freeArrangement(b);
 
-	//printWall(randomWall(1 + rand() % 4, 22.0* (double)rand()/(double)RAND_MAX, 20.0* (double)rand()/(double)RAND_MAX, 0.0));
-	
 	return 0;
 }

@@ -214,7 +214,7 @@ int quadrant(point a) {
 }
 
 arrangement* combine(arrangement *dad, arrangement *mom) {
-	arrangement *out;
+	arrangement *out = malloc(sizeof(arrangement));
 	if ((double)rand() / RAND_MAX < 0.5) {
 		out -> cameraPattern = dad -> cameraPattern;
 	} else {
@@ -268,18 +268,6 @@ arrangement* combine(arrangement *dad, arrangement *mom) {
 				appendTo(iterM -> value, out -> walls);
 				iterM = iterM -> next;
 			}
-		}
-		wallList * current = &quadrants[i][0];
-		while (current != NULL) {
-			wallList *temp = current;
-			current = current -> next;
-			free(temp);
-		}
-		current = &quadrants[i][1];
-		while (current != NULL) {
-			wallList *temp = current;
-			current = current -> next;
-			free(temp);
 		}
 	}
 	return out;
