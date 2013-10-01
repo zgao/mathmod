@@ -117,30 +117,43 @@ double BoxMuller() {
 }
 
 wall* changeWall(wall *x) {
+	if(x == NULL) {
+		return x;
+	}
 	double c = (double)rand() / (double)RAND_MAX;
 	if (c <= WALL_PROBABILITY_TO_MUTATE / 2 ) {
-		wall *out = malloc(sizeof(wall));
 		double theta = (double)rand() / (double)RAND_MAX * M_PI;
+		double newX = x -> x_pos - 5.0*sin(M_PI_2+theta);
+		double newY = x -> y_pos - 5.0*cos(M_PI_2+theta);
+		if(fabs(newX - 11.0) > 11.0 || fabs(newY - 10.0) > 10.0) {
+			return x;
+		}
+		wall *out = malloc(sizeof(wall));
 		out -> child = x;
 		out -> angle = theta;
-		out -> x_pos = x -> x_pos - 5.0*sin(M_PI_2+theta);
-		out -> y_pos = x -> y_pos - 5.0*cos(M_PI_2+theta);
+		out -> x_pos = newX;
+		out -> y_pos = newY;
 		x -> angle -= (M_PI_2 - theta);
 		return out;
 	} else if (c <= WALL_PROBABILITY_TO_MUTATE) {
 		double theta = (double)rand() / (double)RAND_MAX * M_PI;
-		wall *new = malloc(sizeof(wall));
 		wall *last = x;
 		double vAngle = M_PI_2;
 		while ( last -> child != NULL) {
 			vAngle += (last -> angle) - M_PI_2;
 			last = last -> child;
 		}
+		double newX = last -> x_pos + 5.0*(sin(vAngle));
+		double newY = last -> y_pos + 5.0*(cos(vAngle));
+		if (fabs(newX - 11.0) > 11.0 || fabs(newY - 10.0) > 10.0) {
+			return x;
+		}
+		wall *new = malloc(sizeof(wall));
 		new -> child = NULL;
 		last -> child = new;
 		new -> angle = theta;
-		new -> x_pos = last -> x_pos + 5.0*(sin(vAngle));
-		new -> y_pos = last -> y_pos + 5.0*(cos(vAngle));
+		new -> x_pos = newX;
+		new -> y_pos = newY;
 		return x;
 	}
 	return x;
@@ -181,7 +194,7 @@ void mutate(arrangement *x){
 			}
 			mut = mut -> child;
 		}
-
+		
 		current -> value = changeWall(current -> value);
 
 		current = current -> next;
