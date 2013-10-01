@@ -1,5 +1,6 @@
 #include "GalleryArrangement.h"
 #include <stdlib.h>
+#include <stdio.h>
 #include <stdbool.h>
 #include <math.h>
 
@@ -78,12 +79,26 @@ arrangement* createRandomArrangement() {
 	int numberOfWalls = 1 + (rand() % 5);
 	int i;
 	wallList *add = malloc(sizeof(wallList));
-	add -> value = randomWall(1 + rand() % 4, 22.0* (double)rand()/(double)RAND_MAX,20.0*(double)rand()/(double)RAND_MAX , 0.0);
+	int m = 0;
+	wall * addValue = malloc(sizeof(wall));
+	while (m < 2) {
+		free(addValue);
+		wall * addValue = randomWall(2 + rand() % 5, 22.0* (double)rand()/(double)RAND_MAX,20.0*(double)rand()/(double)RAND_MAX , 0.0);
+		m = wallLength(addValue);
+	}
+	add -> value = addValue;
 	add -> next = NULL;
 	wallList *previous = add;
 	for(i=0;i<numberOfWalls - 1;i++) {
 		wallList *t = malloc(sizeof(wallList));
-		t -> value = randomWall(1 + rand() % 4, 22.0* (double)rand()/(double)RAND_MAX,20.0*(double)rand()/(double)RAND_MAX , 0.0);
+		int l = 0;
+		wall * newWall  = malloc(sizeof(wall));
+		while (l < 2) {
+			free(newWall);
+			wall * newWall = randomWall(2 + rand() % 5, 22.0* (double)rand()/(double)RAND_MAX,20.0*(double)rand()/(double)RAND_MAX , 0.0);
+			l = wallLength(newWall);
+		}
+		t -> value = newWall;
 		t -> next = NULL;
 		if (previous != NULL) {
 			previous -> next = t;
