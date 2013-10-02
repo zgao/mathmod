@@ -1,7 +1,6 @@
 #define WALL_PROBABILITY_TO_MUTATE 0.2
 #define POSITION_PROBABILITY_TO_MUTATE 0.2
 #define ANGLE_PROBABILITY_TO_MUTATE 0.1
-#define CAMERA_PROBABILITY_TO_MUTATE 0.05
 
 #include "GeneticAlgorithm.h"
 #include "GalleryArrangement.h"
@@ -36,7 +35,6 @@ void printWall(wall *x) {
 
 void printArrangement(arrangement *x) {
 	printf("ARRANGEMENT:\n");
-	printf("Camera pattern:%d\n", x -> cameraPattern);
 	wallList *it = x -> walls;
 	while(it != NULL) {
 		printWall(it -> value);
@@ -161,9 +159,6 @@ wall* changeWall(wall *x) {
 }
 
 void mutate(arrangement *x){
-	if ((double)rand() / (double) RAND_MAX < CAMERA_PROBABILITY_TO_MUTATE) {
-		x -> cameraPattern += (rand() % 3 - 1);
-	}
 	wallList *current = x -> walls;
 	while (current != NULL) {
 		wall* mut = current -> value;
@@ -238,11 +233,6 @@ int quadrant(point a) {
 
 arrangement* combine(arrangement *dad, arrangement *mom) {
 	arrangement *out = malloc(sizeof(arrangement));
-	if ((double)rand() / RAND_MAX < 0.5) {
-		out -> cameraPattern = dad -> cameraPattern;
-	} else {
-		out -> cameraPattern = mom -> cameraPattern;
-	}
 	out -> walls = malloc(sizeof(wallList));
 	(out -> walls) -> value = NULL;
 	(out -> walls) -> next = NULL;

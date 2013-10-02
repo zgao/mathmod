@@ -17,7 +17,6 @@ typedef struct wallList{
 
 typedef struct arrangement{
 	wallList* walls;
-	int cameraPattern; // we have a finite number of camera patterns we're testing
 } arrangement;
 
 bool isAllowable(wallList *x);
