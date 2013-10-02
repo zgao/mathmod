@@ -1,0 +1,90 @@
+\documentclass{article}
+%\usepackage{fullpage}
+\title{Museum Security}
+\author{Anshul Subramanya, Mighael Gao, Sam DeHority, Zachary Polizzi \\
+North Carolina School of Science and Mathematics}
+\date{October 1, 2013 }
+
+
+\usepackage[pdftex]{graphicx}
+%\usepackage{outline}
+\usepackage{pgfgantt}
+\usepackage{setspace}
+\doublespacing
+\begin{document}
+   \maketitle
+   \begin{center}
+   %\includegraphics[scale=.4]{images/unicorn.jpg}
+      \end{center}
+   \newpage
+	   
+	
+	\tableofcontents
+
+\newpage
+
+	\section{Problem Statement}
+	
+	An art gallery is holding a special exhibition of small water colors. The exhibition will be held in a rectangular room that is 22 meters long and 20 meters wide with entrance and exit doors each 2 meters wide as shown below. Two security cameras are fixed in the corners of the room, with the resulting pictures being watched by an attendant from a remote control room. The security cameras give at any instant a "scan beam" of 30 degrees. They rotate backwards and forwards over the field of vision, taking 20 seconds to complete one cycle. 
+	
+	For the exhibition, 50 water colors are to be shown. Each painting occupies approximately 1 meter of wall space, and must be separated from adjacent paintings by 1 meter of empty wall space and 2 meters from connecting walls. For Security reasons, paintings must be at least 2 meters from the entrances. The gallery also needs to add additional interior wall space in the form of portable walls. The portable walls are available in 5 meter sections. Water colors are to be placed on both sides of these walls. To ensure adequate room for both patrons who are walking through and those stopped to view, parallel walls must be at least 5 meters apart throughout the gallery. To facilitate viewing, adjoining walls should not intersect in an acute angle. The exterior walls of the gallery are 4 meters in height. The portable walls are 3 meters in height. 
+	
+	The diagrams below illustrate the configurations of the gallery room for the last two exhibits. The present exhibitor has expressed some concern over the security of his exhibit and has asked the management to analyze the security system and rearrange the portable walls to optimize the security of the exhibit. 
+	
+	Define a way to measure (quantify) the security of the exhibit for different wall configurations. use this measure to determine which of the two previous exhibitions was the more secure. Finally, determine an optimum portable wall configuration for the water color exhibit based on your measure of security. 
+	
+	\section{Metric of Security}
+	
+	To create a metric of security, we first need to know what we are securing against. We decided that the two main security issues that are relevant to a museum exhibit are theft and vandalism. Theft is defined as taking a painting off the wall and removing it from the exhibit. Vandalism is any sort of damage done to the painting while it is still on the wall, such as spray painting or cutting. We then considered various different factors that could contribute to decreasing the security of the exhibit. These factors included dead spots (areas the cameras can never see), paintings very near the door, and paintings that are rarely under surveillance. Ideally our metric would account for all of these factors and depreciate setups including any of these accordingly.
+	
+	We then considered what would be required for a successful execution of either of these security issues. For a vandalism, the perpetrator must vandalize the painting when the camera is not aimed at it, and then leave the room before the camera comes back to the painting. We are assuming that there is a security guard watching the camera, and that the vandalism will be visible to the camera. The perpetrator must leave the room before the camera notices the vandalism, because one the vandalism is discovered, guards will be sent, doors locked, alarms will sound, etc - so the vandal must have exited the exhibit before this happens in order to not get caught. 
+	
+	For a successful theft, the process is remarkably similar - the thief must remove the painting from the wall and exit the exhibit with it before the camera returns to where the art was hung and notices that it is missing. We are assuming that the thief will have hidden the painting in his jacket or in a container, so that it won't be visible as he is walking with it - if this were not true, however, the safety would only be positively impacted. Again, the alarms will sound when the painting is noticed to be missing, so the thief must exit the exhibit before this happens. 
+	
+	By considering in depth the steps required for a successful execution of a crime, we can now consider how to measure safety and therefore prevent crime. We have noted that for both vandalism and theft, (assuming a worst-case scenario where the vandalism or painting removal is instantaneous) the perpetrator must walk/run from the painting to the nearest door before the camera returns to where the painting was originally located. Therefore, relevant variables to our metric are the distance of the shortest path from the painting to the door, and the longest time in which the painting is not under surveillance. Of course, we must consider each painting in the room, and we will find that some paintings are more secure than others. Therefore, we will define a function etc..
+	
+	\textbf{Talk about weighting system for representing the whole room and comparing different setups}
+
+
+	\section{Implementation}
+	
+	To quickly and efficiently calculate the security function for each possible exhibit setup, we decided to write a program. The program has two main tasks - first, to evaluate the security of a given exhibit setup, and second, to generate new exhibit setups in order to find the optimal setup. 
+	
+	To calculate the security of a given exhibit setup based on our metric, we need to calculate, for each painting, the shortest path to the nearest door, and the longest time in which the painting is not under surveillance. The latter we can calculate using simple 3d-geometry and mathematics, while the former we decided to calculate using a graph-based path planning algorithm.
+	
+	To generate new exhibit setups in order to find the optimal setup, we decided to use a genetic algorithm. A genetic algorithm enables efficient optimization of a complex solution, because it can be passed any arbitrary number of variables to modify in order to converge upon an optimal solution. In addition, a genetic algorithm drastically decreases computational time when compared to doing a random sampling of room setups by quickly converging upon the optimal solution. 
+	
+	Each part of our algorithm is explained in detail in the following sections. The code was written in C because, since we are using genetic algorithms, we will be running an extremely large number of computations, and therefore needed a language that runs very quickly and efficiently. C is easy to use, powerful, and most importantly, very fast. 
+
+	\subsection{Dead Time Calculation}
+	
+	\subsection{Path Planning}
+	
+	\subsection{Genetic Algorithm}
+	
+	
+	
+	
+	
+	
+	\section{Results}
+	
+	
+	
+	\section{Discussion/Conclusion}
+
+\begin{figure}[h!]
+	
+		\begin{center}
+		%\includegraphics[scale=.3]{Images/ackermansteering2.jpg}
+		\end{center}
+		%\caption{Ackerman Steering \cite{dudex00}}
+	\end{figure}
+	
+references?
+
+
+
+
+
+\end{document}
