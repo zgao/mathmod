@@ -120,7 +120,7 @@ wall* changeWall(wall *x) {
 		return x;
 	}
 	double c = (double)rand() / (double)RAND_MAX;
-	if (c <= WALL_PROBABILITY_TO_MUTATE / 2 ) {
+	if (c <= WALL_PROBABILITY_TO_MUTATE / 2.0 ) {
 		double theta = (double)rand() / (double)RAND_MAX * M_PI;
 		double newX = x -> x_pos - 5.0*sin(M_PI_2+theta);
 		double newY = x -> y_pos - 5.0*cos(M_PI_2+theta);
@@ -154,6 +154,15 @@ wall* changeWall(wall *x) {
 		new -> x_pos = newX;
 		new -> y_pos = newY;
 		return x;
+	} else if (c <= WALL_PROBABILITY_TO_MUTATE * 2.0 && wallLength(x) > 2) {
+		wall *last = x;
+		wall *llast = last -> child;
+		while ( llast -> child != NULL) {
+			last = last -> child;
+			llast = llast -> child;
+		}
+		freeWall(llast);
+		last -> child = NULL;
 	}
 	return x;
 }
