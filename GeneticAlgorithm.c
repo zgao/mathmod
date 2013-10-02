@@ -7,6 +7,7 @@
 #include "GalleryArrangement.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <math.h>
 
 typedef struct {
@@ -169,10 +170,19 @@ void mutate(arrangement *x){
 		if((double)rand() / (double)RAND_MAX < POSITION_PROBABILITY_TO_MUTATE) {
 			double xchange = 0.5*BoxMuller();
 			double ychange = 0.5*BoxMuller();
-			while( mut != NULL ) {
-				mut -> x_pos += xchange;
-				mut -> y_pos += ychange;
+			bool allowMutate = true;
+			
+			while(mut != NULL && allowMutate){
+				allowMutate = allowMutate && (fabs(mut -> x_pos + xchange - 11) < 11) && (fabs(mut -> y_pos + ychange - 10) < 10);
 				mut = mut -> child;
+			}
+			mut = current -> value;
+			if (allowMutate) {
+				while( mut != NULL ) {
+					mut -> x_pos += xchange;
+					mut -> y_pos += ychange;
+					mut = mut -> child;
+				}
 			}
 		}
 		mut = current -> value;
@@ -181,15 +191,28 @@ void mutate(arrangement *x){
 			if((double)rand() / (double)RAND_MAX < ANGLE_PROBABILITY_TO_MUTATE && 0 <= (mut -> angle) && M_PI >= (mut -> angle)) {
 				double centerX = mut -> x_pos;
 				double centerY = mut -> y_pos;
-				mut -> angle += angleChange;
-				wall *sub = mut -> child;
 				double r, theta;
-				while( sub != NULL) {
+				wall *sub = mut -> child;
+				bool allowMutate2 = true;
+				bool a, b;
+				while(sub != NULL && allowMutate2) {
 					r = hypot((sub -> x_pos) - centerX, (sub -> y_pos) - centerY);
 					theta = M_PI/2 + atan(((sub -> y_pos) - centerY) / ((sub -> x_pos) - centerX));
-					sub -> x_pos = centerX + r*sin(theta + angleChange);
-					sub -> y_pos = centerY + r*cos(theta + angleChange);
+					a = fabs(centerX + r*sin(theta + angleChange) - 11) < 11;
+					b = fabs(centerY + r*cos(theta + angleChange) - 10) < 10;
+					allowMutate2 = allowMutate2 && a && b;
 					sub = sub -> child;
+				}
+				sub = mut -> child;
+				if (allowMutate2) {
+					mut -> angle += angleChange;
+					while( sub != NULL) {
+						r = hypot((sub -> x_pos) - centerX, (sub -> y_pos) - centerY);
+						theta = M_PI/2 + atan(((sub -> y_pos) - centerY) / ((sub -> x_pos) - centerX));
+						sub -> x_pos = centerX + r*sin(theta + angleChange);
+						sub -> y_pos = centerY + r*cos(theta + angleChange);
+						sub = sub -> child;
+					}
 				}
 			}
 			mut = mut -> child;
