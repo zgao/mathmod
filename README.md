@@ -27,4 +27,6 @@ Put your code in a .c file with its function prototypes and data structures in a
 
 
 Also, we don't consider tree-like walls. So each wall is only connected to at most one other on each end. This makes computation a LOT simpler, and also, having a 3 way wall necessarily creates deadspots (unless the wall is pointing exactly at the camera, but in reality that is actually just 2 dead spots, because you can't see the front of either painting). 
+
+On another note, the data structure is really hackey. It allows for one point walls, and the last element has an angle but no wall attached to it. Think of the wall structus as posts that reside on the corners, and have one direction for walls to attach to it. If there is no child then it's a terminal post. There is a method that returns the points of the wall, it's called wallPoints in GalleryArrangement.c
 -Sam 
