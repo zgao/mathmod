@@ -75,7 +75,6 @@ wall* randomWall(int length, double startx, double starty, double angleOffset) {
 
 arrangement* createRandomArrangement() {
 	arrangement *out = malloc(sizeof(arrangement));
-	out -> cameraPattern = (int)rand() % 4;
 	int numberOfWalls = 1 + (rand() % 5);
 	int i;
 	wallList *add = malloc(sizeof(wallList));
