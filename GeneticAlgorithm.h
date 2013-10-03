@@ -11,4 +11,11 @@ arrangement** rouletteWheelSelection(arrangement **population, double *accumFitn
 void printArrangement(arrangement *x);
 double fitness(arrangement *a);
 
+typedef struct {
+    arrangement *a;
+    double fitness;
+} pear;
+
+
+
 #endif

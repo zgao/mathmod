@@ -14,13 +14,13 @@ bool isAllowable(wallList *x){
 }
 
 void freeArrangement(arrangement *x){
-	wallList *current = x -> walls;
-	while (current != NULL) {
-		wallList *temp = current;
-		freeWall(current -> value);
-		current = current -> next;
-		free(temp);
-	}
+	//wallList *current = x -> walls;
+	//while (current != NULL) {
+	//	wallList *temp = current;
+		//freeWall(current -> value);
+	//	current = current -> next;
+	//	free(temp);
+	//}
 	return;
 }
 
@@ -83,8 +83,7 @@ arrangement* createRandomArrangement() {
 	int m = 0;
 	wall * addValue = malloc(sizeof(wall));
 	while (m < 2) {
-		free(addValue);
-		wall * addValue = randomWall(2 + rand() % GLOBAL_MOD, 22.0* (double)rand()/(double)RAND_MAX,20.0*(double)rand()/(double)RAND_MAX , 0.0);
+		addValue = randomWall(2 + rand() % GLOBAL_MOD, 22.0* (double)rand()/(double)RAND_MAX,20.0*(double)rand()/(double)RAND_MAX , 0.0);
 		m = wallLength(addValue);
 	}
 	add -> value = addValue;
@@ -95,7 +94,6 @@ arrangement* createRandomArrangement() {
 		int l = 0;
 		wall * newWall  = malloc(sizeof(wall));
 		while (l < 2) {
-			free(newWall);
 			wall * newWall = randomWall(2 + rand() % GLOBAL_MOD, 22.0* (double)rand()/(double)RAND_MAX,20.0*(double)rand()/(double)RAND_MAX , 0.0);
 			l = wallLength(newWall);
 		}

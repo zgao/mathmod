@@ -13,6 +13,12 @@ graph_wrapper atog(arrangement *a) {
     point *p = paintings(a, c);
     return graph_of_arrangement(a, c, p);
 }
+int compareFitness2(const void *a, const void *b) {
+    pear
+        aa = *(pear*)a,
+        bb = *(pear*)b;
+    return aa.fitness > bb.fitness;
+}
 
 int main(int argc, char **argv) {
     int n_generations = atoi(argv[1]);
@@ -23,6 +29,8 @@ int main(int argc, char **argv) {
 
     srand(time(NULL));
 
+    printArrangement(createRandomArrangement());
+	
     arrangement **old = malloc(generation_size*sizeof(arrangement*));
     int i;
     for(i = 0; i < generation_size; i++) {
@@ -32,17 +40,23 @@ int main(int argc, char **argv) {
         arrangement **new = generate(old, generation_size, 0.05, generation_size / 100 );
         int j;
         for(j = 0; j < generation_size; j++) {
-            freeArrangement(old[j]);
+            //freeArrangement(old[j]);
         }
-        free(old);
+        //free(old);
         old = new;
     }
     double *fitnesses = malloc(generation_size*(sizeof(double)));
     for(i = 0; i < generation_size; i ++) {
         fitnesses[i] = 50 - fitness(old[i]);
     }
-    weightedSort(old, fitnesses, 0, generation_size - 1);
-    printArrangement(old[0]);
+
+    pear *af = malloc(generation_size*sizeof(pear));
+    for (i = 0; i < generation_size; i++) {
+        af[i].a = old[i];
+        af[i].fitness = fitnesses[i];
+    }
+    qsort(af, generation_size, sizeof(pear), compareFitness2);
+    printArrangement(af[0].a);
     //int i, j;
     //for (i = 0; i < 8; i++) {
     //printf("arrangement\n");

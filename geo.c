@@ -58,7 +58,7 @@ point* paintings(arrangement *a, point *c) {
     wallList *wl;
     for (wl = a->walls; wl != NULL; wl = wl->next) {
         wall *first = wl->value;
-        wall *second;
+        wall *second = first-> child;
         for (second = first->child; second != NULL;
                 first = first->child, second = second->child) {
             double epsilon = 1e-2;
@@ -104,7 +104,7 @@ point* corners(arrangement *a) {
     wallList *wl;
     for (wl = a->walls; wl != NULL; wl = wl->next) {
         wall *first = wl->value;
-        wall *second;
+        wall *second = first->child;
         ret[num_points].x = first->x_pos;
         ret[num_points++].y = first->y_pos;
         for (second = first->child; second != NULL;
