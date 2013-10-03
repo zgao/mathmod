@@ -15,6 +15,12 @@ inline double min(double a, double b, double c, double d) {
     return m2(m2(a, b), m2(c, d));
 }
 
+graph_wrapper atog(arrangement *a) {
+    point *c = corners(a);
+    point *p = paintings(a, c);
+    return graph_of_arrangement(a, c, p);
+}
+
 int main(void) {
     srand(time(NULL));
     int i, j;
@@ -23,7 +29,7 @@ int main(void) {
 
         arrangement *a = createRandomArrangement();
         printArrangement(a);
-        graph_wrapper gw = graph_of_arrangement(a);
+        graph_wrapper gw = atog(a);
 
         for (i = 0; i < 50; i++) {
             double *routes = shortest_paths(gw.graph, i, gw.size);

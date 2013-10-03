@@ -4,10 +4,13 @@
 #include "graph.h"
 #include "GalleryArrangement.h"
 
-typedef struct {
+typedef struct point {
     double x, y;
+    struct point *next;
 } point;
 
-graph_wrapper graph_of_arrangement(arrangement *a);
+point* corners(arrangement *a);
+point* paintings(arrangement *a, point *c);
+graph_wrapper graph_of_arrangement(arrangement *a, point *c, point *p);
 
 #endif
