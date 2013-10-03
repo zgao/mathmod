@@ -74,7 +74,6 @@ wall* randomWall(int length, double startx, double starty, double angleOffset) {
 		}
 	}
 }
-
 arrangement* createRandomArrangement() {
 	arrangement *out = malloc(sizeof(arrangement));
 	int numberOfWalls = 1 + (rand() % 5);
@@ -83,7 +82,8 @@ arrangement* createRandomArrangement() {
 	int m = 0;
 	wall * addValue = malloc(sizeof(wall));
 	while (m < 2) {
-		addValue = randomWall(2 + rand() % GLOBAL_MOD, 22.0* (double)rand()/(double)RAND_MAX,20.0*(double)rand()/(double)RAND_MAX , 0.0);
+		free(addValue);
+		wall * addValue = randomWall(2 + rand() % 5, 22.0* (double)rand()/(double)RAND_MAX,20.0*(double)rand()/(double)RAND_MAX , 0.0);
 		m = wallLength(addValue);
 	}
 	add -> value = addValue;
@@ -94,7 +94,8 @@ arrangement* createRandomArrangement() {
 		int l = 0;
 		wall * newWall  = malloc(sizeof(wall));
 		while (l < 2) {
-			wall * newWall = randomWall(2 + rand() % GLOBAL_MOD, 22.0* (double)rand()/(double)RAND_MAX,20.0*(double)rand()/(double)RAND_MAX , 0.0);
+			free(newWall);
+			wall * newWall = randomWall(2 + rand() % 5, 22.0* (double)rand()/(double)RAND_MAX,20.0*(double)rand()/(double)RAND_MAX , 0.0);
 			l = wallLength(newWall);
 		}
 		t -> value = newWall;
@@ -107,6 +108,7 @@ arrangement* createRandomArrangement() {
 	out -> walls = add;
 	return out;
 }
+
 
 int wallLength(wall *x) {
 	int out = 0;
