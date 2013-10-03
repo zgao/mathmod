@@ -85,7 +85,7 @@ pt wallIntersectSightLine(wall *w, int cam, double x, double y) {
 }
 
 double timeBetweenSight(bool sb1, bool sb2, double x, double y) {
-	bool closerTo1 = (y >= x*20.0/22.0);
+	bool closerTo1 = (y > x*20.0/22.0);
 	if(sb1 && ! sb2) {
 		double a = angleFromCamera(x, y, 1);
 		return 2*(fabs(M_PI_4 - a) + M_PI_4 - M_PI / 6.0) / (M_PI/30.0);

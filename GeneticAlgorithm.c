@@ -3,7 +3,7 @@
 #define ANGLE_PROBABILITY_TO_MUTATE 0.1
 #define RUNNING_MEAN 2.94
 #define RUNNING_SD 0.56
-#define NUMBER_OF_SEGMENTS 100
+#define NUMBER_OF_SEGMENTS 10
 
 #include "GeneticAlgorithm.h"
 #include "GalleryArrangement.h"
@@ -20,6 +20,11 @@ typedef struct {
 	double x;
 	double y;
 } Point;
+
+typedef struct {
+    arrangement *a;
+    double fitness;
+} pear;
 
 inline double m2(double a, double b) {
 	return (a > b) ? b : a;
@@ -41,7 +46,6 @@ int qsSeparate(double *array, int left, int right, int pivot);
 void swapArr(arrangement **array, int a, int b);
 void swapDoub(double *array, int a, int b);
 void printWall(wall *x);
-double fitness(arrangement *a);
 int f(double *securities, double speed);
 double normalDF(double x);
 
@@ -55,6 +59,10 @@ int f(double *securities, double speed) {
 		j ++;
 	}
 	return j;
+}
+
+int compare(const void *a, const void *b) {
+    return (*((double*)a) > *((double*)b));
 }
 
 double fitness(arrangement *a) {
@@ -71,7 +79,7 @@ double fitness(arrangement *a) {
 		double *routes = shortest_paths(G.graph, i, G.size);
 		double dist = min(routes[G.size - 1], routes[G.size - 2], routes[G.size - 3], routes[G.size - 4]);
 		securities[i] = dist / (timeBetweenSight(seenByCamera(current -> x, current -> y, 1, a), seenByCamera(current -> x, current -> y, 2, a) , current -> x, current -> y));
-		quickSort(securities, 0, 49);
+                qsort(securities, 50, sizeof(double), compare);
 	}
 	double out = 0;
 	double top = 6*RUNNING_SD + RUNNING_MEAN;
@@ -405,6 +413,13 @@ arrangement** rouletteWheelSelection(arrangement **population, double* accumFitn
 	return out;
 }
 
+int compareFitness(const void *a, const void *b) {
+    pear
+        aa = *(pear*)a,
+        bb = *(pear*)b;
+    return aa.fitness > bb.fitness;
+}
+
 arrangement** generate(arrangement **previous, int length, float mutationRate, int elitism) {
 	double *fitnesses = malloc(length*sizeof(double));
 	arrangement **out = malloc(length*sizeof(arrangement*));
@@ -413,7 +428,17 @@ arrangement** generate(arrangement **previous, int length, float mutationRate, i
 	for(i = 0; i < length; i++) {
 		fitnesses[i] = 50.0 - fitness(previous[i]);
 	}
-	weightedSort(previous, fitnesses, 0, length - 1);
+
+        pear *af =
+            malloc(length*sizeof(pear));
+        for (i = 0; i < length; i++) {
+            af[i].a = previous[i];
+            af[i].fitness = fitnesses[i];
+        }
+        qsort(af, length, sizeof(pear), compareFitness);
+        for (i = 0; i < length; i++)
+            previous[i] = af[i].a;
+
 	int j = 0;
 	for(i = length - 1; i > 0 ; i --) {
 		for (j = i + 1; j < length ; j++) {

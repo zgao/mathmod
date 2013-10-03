@@ -179,8 +179,7 @@ graph_wrapper graph_of_arrangement(arrangement *a, point *c, point *p) {
     }
     for (i = 0; i < n_corners; i++) {
         int j;
-        for (j = 0; j < n_corners; j++) {
-            if (i == j) continue;
+        for (j = i + 1; j < n_corners; j++) {
             if (no_inter(a, c[i].x, c[i].y,
                         c[j].x, c[j].y)) {
                 //printf("corner %d -> corner %d\n", i, j);

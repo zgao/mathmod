@@ -9,5 +9,6 @@ arrangement** generate(arrangement** previous, int length, float mutationRate, i
 arrangement** stochasticUniversalSample(arrangement **population, double *accumFitness, int length, int keep);
 arrangement** rouletteWheelSelection(arrangement **population, double *accumFitness, double *points, int popLen, int ptsLen);
 void printArrangement(arrangement *x);
+double fitness(arrangement *a);
 
 #endif
