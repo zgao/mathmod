@@ -25,6 +25,7 @@ node make_new_node(int id, int flag, int sz) {
 }
 
 void make_new_edge(node *all, int i, int j, double weight) {
+    printf("Set %d <-> %d to weight %lf\n", i, j, weight);
     int sz_i = all[i].num_edges++, sz_j = all[j].num_edges++;
     all[i].edges[sz_i] = all[j];
     all[j].edges[sz_j] = all[i];
@@ -53,6 +54,9 @@ double* shortest_paths(node *all_nodes, int source, int sz) {
         pair p = pop(pq);
         int now = p.second;
         ret[now] = p.first;
+
+        //printf("Got here: %d at dist %lf\n", p.second, p.first);
+
         node this_node = all_nodes[now];
         seen[now] = 1;
         for (i = 0; i < this_node.num_edges; i++) {
@@ -61,6 +65,7 @@ double* shortest_paths(node *all_nodes, int source, int sz) {
                 double dist = this_node.weights[i];
                 if (ret[now] + dist < ret[next.id]) {
                     ret[next.id] = ret[now] + dist;
+                    //printf("updating: %d %lf\n", next.id, ret[next.id]);
                     update(pq, next.id, ret[next.id]);
                     assert(valid_heap(pq));
                 }
@@ -71,4 +76,12 @@ double* shortest_paths(node *all_nodes, int source, int sz) {
     destroy_heap(pq);
 
     return ret;
+}
+
+void destroy_graph(graph_wrapper gw) {
+    int i;
+    for (i = 0; i < gw.size; i++) {
+        free(gw.graph[i].edges);
+        free(gw.graph[i].weights);
+    }
 }

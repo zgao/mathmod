@@ -8,6 +8,6 @@ typedef struct {
     double x, y;
 } point;
 
-node* graph_of_arrangement(arrangement *a);
+graph_wrapper graph_of_arrangement(arrangement *a);
 
 #endif

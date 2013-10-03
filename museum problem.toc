@@ -1,0 +1,8 @@
+\contentsline {section}{\numberline {1}Problem Statement}{3}
+\contentsline {section}{\numberline {2}Metric of Security}{4}
+\contentsline {section}{\numberline {3}Implementation}{5}
+\contentsline {subsection}{\numberline {3.1}Dead Time Calculation}{6}
+\contentsline {subsection}{\numberline {3.2}Path Planning}{6}
+\contentsline {subsection}{\numberline {3.3}Genetic Algorithm}{6}
+\contentsline {section}{\numberline {4}Results}{6}
+\contentsline {section}{\numberline {5}Discussion/Conclusion}{6}

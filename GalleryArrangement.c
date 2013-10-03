@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include <math.h>
 
+#define GLOBAL_MOD 8
+
 wall*  randomWall(int length, double startx, double startyi, double angleOffset);
 void appendTo(wall *datum, wallList *x);
 
@@ -82,7 +84,7 @@ arrangement* createRandomArrangement() {
 	wall * addValue = malloc(sizeof(wall));
 	while (m < 2) {
 		free(addValue);
-		wall * addValue = randomWall(2 + rand() % 5, 22.0* (double)rand()/(double)RAND_MAX,20.0*(double)rand()/(double)RAND_MAX , 0.0);
+		wall * addValue = randomWall(2 + rand() % GLOBAL_MOD, 22.0* (double)rand()/(double)RAND_MAX,20.0*(double)rand()/(double)RAND_MAX , 0.0);
 		m = wallLength(addValue);
 	}
 	add -> value = addValue;
@@ -94,7 +96,7 @@ arrangement* createRandomArrangement() {
 		wall * newWall  = malloc(sizeof(wall));
 		while (l < 2) {
 			free(newWall);
-			wall * newWall = randomWall(2 + rand() % 5, 22.0* (double)rand()/(double)RAND_MAX,20.0*(double)rand()/(double)RAND_MAX , 0.0);
+			wall * newWall = randomWall(2 + rand() % GLOBAL_MOD, 22.0* (double)rand()/(double)RAND_MAX,20.0*(double)rand()/(double)RAND_MAX , 0.0);
 			l = wallLength(newWall);
 		}
 		t -> value = newWall;
