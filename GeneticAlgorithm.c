@@ -21,11 +21,6 @@ typedef struct {
 	double y;
 } Point;
 
-typedef struct {
-    arrangement *a;
-    double fitness;
-} pear;
-
 inline double m2(double a, double b) {
 	return (a > b) ? b : a;
 }
@@ -55,7 +50,7 @@ double normalDF(double x) {
 
 int f(double *securities, double speed) {
 	int j = 0;
-	while(securities[j] < speed) {
+	while(securities[j] < speed && j < 49) {
 		j ++;
 	}
 	return j;
@@ -69,6 +64,7 @@ double fitness(arrangement *a) {
 	point *corns = corners(a);
 	point *paint = paintings(a, corns);
 	if (paint == NULL) {
+		puts("PAINT IS NULL");
 		return 0.0;
 	}
 	graph_wrapper G = graph_of_arrangement(a, paint, corns);
@@ -179,7 +175,7 @@ void shuffle(arrangement **array, int n) {
 		int i;
 		arrangement *t;
 		for (i = 0; i < n-1; i++) {
-			int j = i + rand() / (RAND_MAX / (n-1) + 1);
+			int j = rand() % (n-1);
 			t = array[i];
 			array[i] = array[j];
 			array[j] = t;
@@ -334,7 +330,8 @@ int quadrant(Point a) {
 
 arrangement* combine(arrangement *dad, arrangement *mom) {
 	arrangement *out = malloc(sizeof(arrangement));
-	out -> walls = malloc(sizeof(wallList));
+	wallList *W = malloc(sizeof(wallList));
+	out -> walls = W;
 	(out -> walls) -> value = NULL;
 	(out -> walls) -> next = NULL;
 	wallList *quadrants[4]; 
@@ -419,7 +416,6 @@ int compareFitness(const void *a, const void *b) {
         bb = *(pear*)b;
     return aa.fitness > bb.fitness;
 }
-
 arrangement** generate(arrangement **previous, int length, float mutationRate, int elitism) {
 	double *fitnesses = malloc(length*sizeof(double));
 	arrangement **out = malloc(length*sizeof(arrangement*));
@@ -447,7 +443,7 @@ arrangement** generate(arrangement **previous, int length, float mutationRate, i
 	}
 	int parentPop = 2*(length - elitism);
 	arrangement **parents = stochasticUniversalSample(previous, fitnesses, length, parentPop);
-	shuffle(parents, parentPop);
+	shuffle(parents, parentPop - 1);
 	for(i = 0; i < elitism; i++) {
 		out[i] = previous[i];
 	}
