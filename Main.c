@@ -7,13 +7,6 @@
 #include <time.h>
 #include <math.h>
 
-inline double m2(double a, double b) {
-    return (a > b) ? b : a;
-}
-
-inline double min(double a, double b, double c, double d) {
-    return m2(m2(a, b), m2(c, d));
-}
 
 graph_wrapper atog(arrangement *a) {
     point *c = corners(a);
