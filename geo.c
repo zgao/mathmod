@@ -54,12 +54,47 @@ node* graph_of_arrangement(arrangement *a) {
     double paintings[n_paintings][2]; //use epsilon normal
     double corners[n_corners][2];
     double doors[2][2];
-    int paintings_yet_placed = 50 - numberOfWalls(a) * 2;
-    for (wallList *w = a->walls; w != NULL; w = w->next) {
+    int paintings_placed = 0, num_points = 0;
+    point *concerned = (point*) malloc(sizeof(point) * n_corners);
+    //0,0 lower left hand corner, 20x22, 2 meter wide door
+    for (wallList *wl = a->walls; wl != NULL; wl = wl->next) {
+        wall *first = wl->value;
+        concerned[num_points].x = first->x_pos;
+        concerned[num_points++].y = first->y_pos;
+        for (wall *second = first->child; second != NULL;
+                first = first->child, second = second->child) {
+            concerned[num_points].x = second->x_pos;
+            concerned[num_points++].y = second->y_pos;
+            double epsilon = 1e-3;
+            double x_delta = first->y_pos - second->y_pos;
+            double y_delta = second->x_pos - first->x_pos;
+            double x_pos = (first->x_pos + second->x_pos) / 2.;
+            double y_pos = (first->y_pos + second->y_pos) / 2.;
+            paintings[paintings_placed][0] = x_pos + epsilon * x_delta;
+            paintings[paintings_placed++][0] = y_pos + epsilon * y_delta;
+            paintings[paintings_placed][0] = x_pos - epsilon * x_delta;
+            paintings[paintings_placed++][0] = y_pos - epsilon * y_delta;
+        }
+    }
+    double counters_x[4] = { 0.0, 1.5, 20.5, 22.0 };
+    double counters_y[4] = { 18.5, 20.0, 0.0, 1.5 };
+    double dx[4] = { 0.0, 3.0, -3.0, 0.0 };
+    double dy[4] = { -3.0, 0.0, 0.0, 3.0 };
+    int i = 0;
+    while (paintings_placed < 50) {
+        i %= 4;
+        if (works(concerned, n_corners, counters_x[i], counters_y[i])) {
+            paintings[paintings_placed][0] = counters_x[i];
+            paintings[paintings_placed++][1] = counters_y[i];
+        }
+        counters_x[i] += dx[i];
+        counters_y[i] += dy[i];
+        //check out of bounds
+        i++;
     }
     //now that we have the painting positions, we can form the graph
     node* graph = (node*) malloc(sizeof(node) * n_vertices);
-    int i; int graph_size = 0;
+    int graph_size = 0;
     for (i = 0; i < n_paintings; i++)
         graph[graph_size] = make_new_node(graph_size++, 1, n_vertices);
     for (i = 0; i < n_corners; i++)
@@ -93,6 +128,7 @@ node* graph_of_arrangement(arrangement *a) {
     for (i = 0; i < n_corners; i++) {
         int j;
         for (j = 0; j < n_corners; j++) {
+            if (i == j) continue;
             if (no_inter(a, corners[i][0], corners[i][1],
                         corners[j][0], corners[j][1]))
                 make_new_edge(graph, i + n_paintings, j + n_paintings,
