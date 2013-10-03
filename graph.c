@@ -50,6 +50,14 @@ double* shortest_paths(node *all_nodes, int source, int sz) {
     ret[source] = 0.0;
     seen[source] = 1;
 
+    /*
+    for (i = 0; i < sz; i++) {
+        printf("%d:\n", i);
+        int j;
+        for (j = 0; j < all_nodes[i].num_edges; j++)
+            printf("%d\n", all_nodes[i].edges[j].id);
+    }*/
+
     while (!empty(pq)) {
         pair p = pop(pq);
         int now = p.second;

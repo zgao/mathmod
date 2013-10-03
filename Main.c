@@ -22,39 +22,40 @@ int main(int argc, char **argv) {
     printf("Generation size: %d\n", generation_size);
 
     srand(time(NULL));
-	
+
     arrangement **old = malloc(generation_size*sizeof(arrangement*));
     int i;
     for(i = 0; i < generation_size; i++) {
         old[i] = createRandomArrangement();
     }
     for(i = 0; i < n_generations; i++) {
-	arrangement **new = generate(old, generation_size, 0.05, generation_size / 100 );
-	int j;
-	for(j = 0; j < generation_size; j++) {
-		freeArrangement(old[j]);
-	}
-	free(old);
-	old = new;
+        arrangement **new = generate(old, generation_size, 0.05, generation_size / 100 );
+        printf("darn\n");
+        int j;
+        for(j = 0; j < generation_size; j++) {
+            freeArrangement(old[j]);
+        }
+        free(old);
+        old = new;
     }
     double *fitnesses = malloc(generation_size*(sizeof(double)));
     for(i = 0; i < generation_size; i ++) {
-	fitnesses[i] = 50 - fitness(old[i]);
+        fitnesses[i] = 50 - fitness(old[i]);
     }
     weightedSort(old, fitnesses, 0, generation_size - 1);
-    printArrangement(old[0]);    
+    printArrangement(old[0]);
     //int i, j;
     //for (i = 0; i < 8; i++) {
-        //printf("arrangement\n");
+    //printf("arrangement\n");
 
-       // arrangement *a = createRandomArrangement();
-       // printArrangement(a);
-       // graph_wrapper gw = atog(a);
+    // arrangement *a = createRandomArrangement();
+    // printArrangement(a);
+    // graph_wrapper gw = atog(a);
 
-        //for (i = 0; i < 50; i++) {
-         //   double *routes = shortest_paths(gw.graph, i, gw.size);
-        //    printf("%d: %lf\n", i, min(routes[gw.size - 1], routes[gw.size - 2], routes[gw.size - 3], routes[gw.size - 4]));
-        //}
+    //for (i = 0; i < 50; i++) {
+    //   double *routes = shortest_paths(gw.graph, i, gw.size);
+    //    printf("%d: %lf\n", i, min(routes[gw.size - 1], routes[gw.size - 2], routes[gw.size - 3], routes[gw.size - 4]));
+    //}
 
 
     //}
