@@ -25,7 +25,7 @@ node make_new_node(int id, int flag, int sz) {
 }
 
 void make_new_edge(node *all, int i, int j, double weight) {
-    printf("Set %d <-> %d to weight %lf\n", i, j, weight);
+    //printf("Set %d <-> %d to weight %lf\n", i, j, weight);
     int sz_i = all[i].num_edges++, sz_j = all[j].num_edges++;
     all[i].edges[sz_i] = all[j];
     all[j].edges[sz_j] = all[i];

@@ -83,7 +83,7 @@ point* paintings(arrangement *a, point *c) {
         if (works(c, counters_x[i], counters_y[i])) {
             ret[paintings_placed].x = counters_x[i];
             ret[paintings_placed++].y = counters_y[i];
-            printf("%lf %lf\n", counters_x[i], counters_y[i]);
+            //printf("%lf %lf\n", counters_x[i], counters_y[i]);
         }
         counters_x[i] += dx[i];
         counters_y[i] += dy[i];
