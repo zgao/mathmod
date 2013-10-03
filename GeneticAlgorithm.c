@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <math.h>
-#include <omp.h>
+//#include <omp.h>
 #include "geo.h"
 #include "graph.h"
 
@@ -409,7 +409,7 @@ arrangement** generate(arrangement **previous, int length, float mutationRate, i
 	double *fitnesses = malloc(length*sizeof(double));
 	arrangement **out = malloc(length*sizeof(arrangement*));
 	int i;
-	#pragma omp parallel for
+	//#pragma omp parallel for
 	for(i = 0; i < length; i++) {
 		fitnesses[i] = 50.0 - fitness(previous[i]);
 	}
