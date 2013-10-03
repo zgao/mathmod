@@ -81,9 +81,10 @@ arrangement* createRandomArrangement() {
 	wallList *add = malloc(sizeof(wallList));
 	int m = 0;
 	wall * addValue = malloc(sizeof(wall));
+	addValue = NULL;
 	while (m < 2) {
-		free(addValue);
-		wall * addValue = randomWall(2 + rand() % 5, 22.0* (double)rand()/(double)RAND_MAX,20.0*(double)rand()/(double)RAND_MAX , 0.0);
+		freeWall(addValue);
+		addValue = randomWall(2 + rand() % 5, 22.0* (double)rand()/(double)RAND_MAX,20.0*(double)rand()/(double)RAND_MAX , 0.0);
 		m = wallLength(addValue);
 	}
 	add -> value = addValue;
@@ -93,9 +94,10 @@ arrangement* createRandomArrangement() {
 		wallList *t = malloc(sizeof(wallList));
 		int l = 0;
 		wall * newWall  = malloc(sizeof(wall));
+		newWall = NULL;
 		while (l < 2) {
-			free(newWall);
-			wall * newWall = randomWall(2 + rand() % 5, 22.0* (double)rand()/(double)RAND_MAX,20.0*(double)rand()/(double)RAND_MAX , 0.0);
+			freeWall(newWall);
+			newWall = randomWall(2 + rand() % 5, 22.0* (double)rand()/(double)RAND_MAX,20.0*(double)rand()/(double)RAND_MAX , 0.0);
 			l = wallLength(newWall);
 		}
 		t -> value = newWall;
