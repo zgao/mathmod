@@ -4,9 +4,6 @@
 
 #include "geo.h"
 
-const int n_paintings = 50;
-const int n_corners = 150;
-const int n_vertices = 200;
 const double threshold = 2.0;
 
 int ls_inter(double x1, double y1, double x2, double y2,
@@ -43,10 +40,10 @@ int no_inter(arrangement *a, double x1, double y1, double x2, double y2) {
     return 1;
 }
 
-int works(point *corners, int nc, double x, double y) {
-    int i;
-    for (i = 0; i < nc; i++) {
-        if (hypot(x - corners[i].x, y - corners[i].y) < threshold) {
+int works(point *corners, double x, double y) {
+    point *c;
+    for (c = corners; c != NULL; c = c->next) {
+        if (hypot(x - c->x, y - c->y) < threshold) {
             //printf("doesn't work: %lf %lf\n", x, y);
             return false;
         }
@@ -54,8 +51,78 @@ int works(point *corners, int nc, double x, double y) {
     return true;
 }
 
-graph_wrapper graph_of_arrangement(arrangement *a) {
-    double paintings[n_paintings][2]; //use epsilon normal
+point* paintings(arrangement *a, point *c) {
+    point *ret = (point*) malloc(sizeof(point) * 50);
+    int paintings_placed = 0;
+
+    wallList *wl;
+    for (wl = a->walls; wl != NULL; wl = wl->next) {
+        wall *first = wl->value;
+        wall *second;
+        for (second = first->child; second != NULL;
+                first = first->child, second = second->child) {
+            double epsilon = 1e-2;
+            double x_delta = first->y_pos - second->y_pos;
+            double y_delta = second->x_pos - first->x_pos;
+            double x_pos = (first->x_pos + second->x_pos) / 2.;
+            double y_pos = (first->y_pos + second->y_pos) / 2.;
+            ret[paintings_placed].x = x_pos + epsilon * x_delta;
+            ret[paintings_placed++].y = y_pos + epsilon * y_delta;
+            ret[paintings_placed].x = x_pos - epsilon * x_delta;
+            ret[paintings_placed++].y = y_pos - epsilon * y_delta;
+        }
+    }
+
+    double counters_x[4] = { 0.0, 1.0, 21.0, 22.0 };
+    double counters_y[4] = { 19.0, 20.0, 0.0, 1.0 };
+    double dx[4] = { 0.0, 2.0, -2.0, 0.0 };
+    double dy[4] = { -2.0, 0.0, 0.0, 2.0 };
+    int i = 0;
+    while (paintings_placed < 50) {
+        i %= 4;
+        if (works(c, counters_x[i], counters_y[i])) {
+            ret[paintings_placed].x = counters_x[i];
+            ret[paintings_placed++].y = counters_y[i];
+            printf("%lf %lf\n", counters_x[i], counters_y[i]);
+        }
+        counters_x[i] += dx[i];
+        counters_y[i] += dy[i];
+        //check out of bounds
+        i++;
+    }
+
+    for (i = 0; i < 50; i++) {
+        ret[i].next = ret + (i + 1);
+    }
+    ret[49].next = NULL;
+
+    return ret;
+}
+
+point* corners(arrangement *a) {
+    int num_points = 0;
+    point *ret = (point*) malloc(sizeof(point) * 100);
+    wallList *wl;
+    for (wl = a->walls; wl != NULL; wl = wl->next) {
+        wall *first = wl->value;
+        wall *second;
+        ret[num_points].x = first->x_pos;
+        ret[num_points++].y = first->y_pos;
+        for (second = first->child; second != NULL;
+                first = first->child, second = second->child) {
+            ret[num_points].x = second->x_pos;
+            ret[num_points++].y = second->y_pos;
+        }
+    }
+
+    int i;
+    for (i = 0; i < num_points - 1; i++) ret[i].next = ret + i + 1;
+    ret[num_points - 1].next = NULL;
+
+    return ret;
+}
+
+graph_wrapper graph_of_arrangement(arrangement *a, point *c, point *p) {
     double doors[4][2];
 
     doors[0][0] = 0.0;
@@ -67,107 +134,71 @@ graph_wrapper graph_of_arrangement(arrangement *a) {
     doors[3][0] = 22.0;
     doors[3][1] = 20.0;
 
-    int paintings_placed = 0, num_points = 0;
-    point *corners = (point*) malloc(sizeof(point) * n_corners);
-    //0,0 lower left hand corner, 20x22, 2 meter wide door
-    wallList *wl;
-    for (wl = a->walls; wl != NULL; wl = wl->next) {
-        wall *first = wl->value;
-        wall *second;
-        corners[num_points].x = first->x_pos;
-        corners[num_points++].y = first->y_pos;
-        for (second = first->child; second != NULL;
-                first = first->child, second = second->child) {
-            corners[num_points].x = second->x_pos;
-            corners[num_points++].y = second->y_pos;
-            double epsilon = 1e-2;
-            double x_delta = first->y_pos - second->y_pos;
-            double y_delta = second->x_pos - first->x_pos;
-            double x_pos = (first->x_pos + second->x_pos) / 2.;
-            double y_pos = (first->y_pos + second->y_pos) / 2.;
-            paintings[paintings_placed][0] = x_pos + epsilon * x_delta;
-            paintings[paintings_placed++][1] = y_pos + epsilon * y_delta;
-            paintings[paintings_placed][0] = x_pos - epsilon * x_delta;
-            paintings[paintings_placed++][1] = y_pos - epsilon * y_delta;
-            //printf("2 paintings: %lf %lf\n", x_pos, y_pos);
-        }
-    }
-    double counters_x[4] = { 0.0, 1.0, 21.0, 22.0 };
-    double counters_y[4] = { 19.0, 20.0, 0.0, 1.0 };
-    double dx[4] = { 0.0, 2.0, -2.0, 0.0 };
-    double dy[4] = { -2.0, 0.0, 0.0, 2.0 };
-    int i = 0;
-    while (paintings_placed < 50) {
-        i %= 4;
-        if (works(corners, num_points, counters_x[i], counters_y[i])) {
-            paintings[paintings_placed][0] = counters_x[i];
-            paintings[paintings_placed++][1] = counters_y[i];
-            printf("%lf %lf\n", counters_x[i], counters_y[i]);
-        }
-        counters_x[i] += dx[i];
-        counters_y[i] += dy[i];
-        //check out of bounds
-        i++;
-    }
-    //now that we have the painting positions, we can form the graph
+    int n_corners = 0;
+    point *corner;
+    for (corner = c; corner != NULL; corner = corner->next) n_corners++;
+
+    int n_vertices = 54 + n_corners;
+
     node* graph = (node*) malloc(sizeof(node) * n_vertices);
     int graph_size = 0;
-    for (i = 0; i < n_paintings; i++)
+    int i;
+    for (i = 0; i < 50; i++)
         graph[graph_size] = make_new_node(graph_size++, 1, n_vertices);
-    for (i = 0; i < num_points; i++)
+    for (i = 0; i < n_corners; i++)
         graph[graph_size] = make_new_node(graph_size++, 0, n_vertices);
     for (i = 0; i < 4; i++)
         graph[graph_size] = make_new_node(graph_size++, 2, n_vertices);
-    for (i = 0; i < n_paintings; i++) {
+
+    for (i = 0; i < 50; i++) {
         int j;
-        for (j = 0; j < num_points; j++) {
-            int flag = 0;
+        for (j = 0; j < n_corners; j++) {
             if (no_inter(a,
-                        paintings[i][0], paintings[i][1],
-                        corners[j].x, corners[j].y)) {
+                        p[i].x, p[i].y,
+                        c[j].x, c[j].y)) {
                 //printf("painting %d -> corner %d\n", i, j);
-                make_new_edge(graph, i, j + n_paintings,
+                make_new_edge(graph, i, j + 50,
                         hypot(
-                            paintings[i][0] - corners[j].x,
-                            paintings[i][1] - corners[j].y
+                            p[i].x - c[j].x,
+                            p[i].y - c[j].y
                             ));
             }
         }
         for (j = 0; j < 4; j++) {
             if (no_inter(a,
-                        paintings[i][0], paintings[i][1],
+                        p[i].x, p[i].y,
                         doors[j][0], doors[j][1])) {
                 //printf("painting %d -> door %d\n", i, j);
-                make_new_edge(graph, i, j + n_paintings + num_points,
+                make_new_edge(graph, i, j + 50 + n_corners,
                         hypot(
-                            paintings[i][0] - doors[j][0],
-                            paintings[i][1] - doors[j][1]
+                            p[i].x - doors[j][0],
+                            p[i].y - doors[j][1]
                             ));
             }
         }
     }
-    for (i = 0; i < num_points; i++) {
+    for (i = 0; i < n_corners; i++) {
         int j;
-        for (j = 0; j < num_points; j++) {
+        for (j = 0; j < n_corners; j++) {
             if (i == j) continue;
-            if (no_inter(a, corners[i].x, corners[i].y,
-                        corners[j].x, corners[j].y)) {
+            if (no_inter(a, c[i].x, c[i].y,
+                        c[j].x, c[j].y)) {
                 //printf("corner %d -> corner %d\n", i, j);
-                make_new_edge(graph, i + n_paintings, j + n_paintings,
+                make_new_edge(graph, i + 50, j + 50,
                         hypot(
-                            corners[i].x - corners[j].x,
-                            corners[i].y - corners[j].y
+                            c[i].x - c[j].x,
+                            c[i].y - c[j].y
                             ));
             }
         }
         for (j = 0; j < 4; j++) {
-            if (no_inter(a, corners[i].x, corners[i].y,
+            if (no_inter(a, c[i].x, c[i].y,
                         doors[j][0], doors[j][1])) {
                 //printf("corner %d -> door %d\n", i, j);
-                make_new_edge(graph, i + n_paintings, j + n_paintings + num_points,
+                make_new_edge(graph, i + 50, j + 50 + n_corners,
                         hypot(
-                            corners[i].x - doors[j][0],
-                            corners[i].y - doors[j][1]
+                            c[i].x - doors[j][0],
+                            c[i].y - doors[j][1]
                             ));
             }
         }
@@ -175,7 +206,7 @@ graph_wrapper graph_of_arrangement(arrangement *a) {
 
     graph_wrapper gw;
     gw.graph = graph;
-    gw.size = n_paintings + num_points + 4;
+    gw.size = n_vertices;
 
     return gw;
 }
