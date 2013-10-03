@@ -78,7 +78,14 @@ point* paintings(arrangement *a, point *c) {
     double dx[4] = { 0.0, 2.0, -2.0, 0.0 };
     double dy[4] = { -2.0, 0.0, 0.0, 2.0 };
     int i = 0;
+
+    int ctr = 0;
+
     while (paintings_placed < 50) {
+        ctr++;
+
+        if (ctr == 32) return NULL;
+
         i %= 4;
         if (works(c, counters_x[i], counters_y[i])) {
             ret[paintings_placed].x = counters_x[i];
