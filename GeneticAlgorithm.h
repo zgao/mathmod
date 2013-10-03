@@ -5,7 +5,7 @@
 
 void mutate(arrangement *x);
 arrangement*  combine(arrangement *dad, arrangement *mom);
-arrangement** generate(arrangement** previous, int length, float mutationRate, int elitism, double (*fitnessp)(arrangement*));
+arrangement** generate(arrangement** previous, int length, float mutationRate, int elitism);
 arrangement** stochasticUniversalSample(arrangement **population, double *accumFitness, int length, int keep);
 arrangement** rouletteWheelSelection(arrangement **population, double *accumFitness, double *points, int popLen, int ptsLen);
 void printArrangement(arrangement *x);

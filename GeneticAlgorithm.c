@@ -1,30 +1,89 @@
 #define WALL_PROBABILITY_TO_MUTATE 0.2
 #define POSITION_PROBABILITY_TO_MUTATE 0.2
 #define ANGLE_PROBABILITY_TO_MUTATE 0.1
+#define RUNNING_MEAN 2.94
+#define RUNNING_SD 0.56
+#define NUMBER_OF_SEGMENTS 100
 
 #include "GeneticAlgorithm.h"
 #include "GalleryArrangement.h"
+#include "Camera.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <math.h>
 #include <omp.h>
+#include "geo.h"
+#include "graph.h"
 
 typedef struct {
 	double x;
 	double y;
-} point;
+} Point;
+
+inline double m2(double a, double b) {
+	return (a > b) ? b : a;
+}
+
+inline double min(double a, double b, double c, double d) {
+	return m2(m2(a,b), m2(c,d));
+}
 
 double BoxMuller(); //returns standard normal random number
 wall* changeWall(wall *x);
-point centerOfMass(wall *x);
-int quadrant(point a);
+Point centerOfMass(wall *x);
+int quadrant(Point a);
 void shuffle(arrangement **array, int n);
 void weightedSort(arrangement **array, double *weights, int left, int right);
 int  wsSeparate(arrangement **array, double *weights, int left, int right, int pivot);
+void quickSort(double *array, int left, int right);
+int qsSeparate(double *array, int left, int right, int pivot);
 void swapArr(arrangement **array, int a, int b);
 void swapDoub(double *array, int a, int b);
 void printWall(wall *x);
+double fitness(arrangement *a);
+int f(double *securities, double speed);
+double normalDF(double x);
+
+double normalDF(double x) {
+	return 1.0 / (RUNNING_SD * sqrt(2*M_PI)) * exp((-1.0) *  (x - RUNNING_MEAN)*(x - RUNNING_MEAN) / (2 * (RUNNING_SD) * (RUNNING_SD) ) );
+}
+
+int f(double *securities, double speed) {
+	int j = 0;
+	while(securities[j] < speed) {
+		j ++;
+	}
+	return j;
+}
+
+double fitness(arrangement *a) {
+	point *corns = corners(a);
+	point *paint = paintings(a, corns);
+	if (paint == NULL) {
+		return 0.0;
+	}
+	graph_wrapper G = graph_of_arrangement(a, paint, corns);
+	double *securities = malloc(50*sizeof(double));
+	int i;
+	point *current = paint;
+	for(i = 0; i < 50; i ++) {
+		double *routes = shortest_paths(G.graph, i, G.size);
+		double dist = min(routes[G.size - 1], routes[G.size - 2], routes[G.size - 3], routes[G.size - 4]);
+		securities[i] = dist / (timeBetweenSight(seenByCamera(current -> x, current -> y, 1, a), seenByCamera(current -> x, current -> y, 2, a) , current -> x, current -> y));
+		quickSort(securities, 0, 49);
+	}
+	double out = 0;
+	double top = 6*RUNNING_SD + RUNNING_MEAN;
+	double segmentLength = top / (double)NUMBER_OF_SEGMENTS;
+	out += 0.5 * f(securities, 0.001) * normalDF(0.001);
+	out += 0.5 * f(securities, top) * normalDF(0.001);
+	for (i = 1; i < NUMBER_OF_SEGMENTS - 1; i ++) {
+		out += f(securities, i*segmentLength) * normalDF(i*segmentLength);
+	}
+	out *= segmentLength;
+	return out;
+}
 
 void printWall(wall *x) {
 	if (x == NULL) {
@@ -54,6 +113,30 @@ void swapDoub(double *array, int a, int b) {
 	double t = array[a];
 	array[a] = array[b];
 	array[b] = t;
+}
+
+
+void quickSort(double *array, int left, int right) {
+	if ( left < right) {
+		int piv = left+right / 2;
+		int newPiv = qsSeparate(array, left, right, piv);
+		quickSort(array, left, newPiv-1);
+		quickSort(array, newPiv + 1, right);
+	}	
+}
+
+int qsSeparate(double *array, int left, int right, int pivot) {
+	double pivValue = array[pivot];
+	swapDoub(array, pivot, right);
+	int tempIndex = left;
+	int i;
+	for(i = left; i < right; i++) {
+		if (array[i] < pivValue) {
+			swapDoub(array, i, tempIndex);
+			tempIndex ++;
+		}
+	}
+	swapDoub(array, tempIndex, right );
 }
 
 int wsSeparate(arrangement **array, double *weights, int left, int right, int pivot) {
@@ -97,7 +180,7 @@ void shuffle(arrangement **array, int n) {
 	return;
 }
 
-point centerOfMass(wall *x) {
+Point centerOfMass(wall *x) {
 	int len = wallLength(x) + 1;
 	double sumx = 0;
 	double sumy = 0;
@@ -107,7 +190,7 @@ point centerOfMass(wall *x) {
 		sumy += curr -> y_pos;
 		curr = curr -> child;
 	}
-	return (point) {sumx/ (double) len, sumy / (double) len};
+	return (Point) {sumx/ (double) len, sumy / (double) len};
 }
 
 double BoxMuller() {
@@ -229,7 +312,7 @@ void mutate(arrangement *x){
 	}
 }
 
-int quadrant(point a) {
+int quadrant(Point a) {
 	if ( (a.x <= 11) && (a.y <= 10) ) {
 		return 0;
 	} else if ( (a.x > 11) && (a.y <= 10) ){
@@ -322,13 +405,13 @@ arrangement** rouletteWheelSelection(arrangement **population, double* accumFitn
 	return out;
 }
 
-arrangement** generate(arrangement **previous, int length, float mutationRate, int elitism, double (*fitnessp)(arrangement*)) {
+arrangement** generate(arrangement **previous, int length, float mutationRate, int elitism) {
 	double *fitnesses = malloc(length*sizeof(double));
 	arrangement **out = malloc(length*sizeof(arrangement*));
 	int i;
 	#pragma omp parallel for
 	for(i = 0; i < length; i++) {
-		fitnesses[i] = (*fitnessp)(previous[i]);
+		fitnesses[i] = 50.0 - fitness(previous[i]);
 	}
 	weightedSort(previous, fitnesses, 0, length - 1);
 	int j = 0;
