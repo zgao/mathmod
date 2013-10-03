@@ -14,7 +14,13 @@ graph_wrapper atog(arrangement *a) {
     return graph_of_arrangement(a, c, p);
 }
 
-int main(void) {
+int main(int argc, char **argv) {
+    int n_generations = atoi(argv[1]);
+    int generation_size = atoi(argv[2]);
+
+    printf("Number of generations: %d\n", n_generations);
+    printf("Generation size: %d\n", generation_size);
+
     srand(time(NULL));
     int i, j;
     //for (i = 0; i < 8; i++) {
