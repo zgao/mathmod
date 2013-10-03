@@ -87,7 +87,6 @@ point* paintings(arrangement *a, point *c) {
         }
         counters_x[i] += dx[i];
         counters_y[i] += dy[i];
-        //check out of bounds
         i++;
     }
 

@@ -334,10 +334,10 @@ int quadrant(Point a) {
 
 arrangement* combine(arrangement *dad, arrangement *mom) {
 	arrangement *out = malloc(sizeof(arrangement));
-	out -> walls = malloc(sizeof(wallList));
+	out -> walls = (wallList*) malloc(sizeof(wallList));
 	(out -> walls) -> value = NULL;
 	(out -> walls) -> next = NULL;
-	wallList *quadrants[4]; 
+	wallList *quadrants[4];
 	int i;
 	for ( i = 0; i < 4; i ++) {
 		quadrants[i] = malloc(2*sizeof(wallList));
@@ -429,6 +429,7 @@ arrangement** generate(arrangement **previous, int length, float mutationRate, i
 		fitnesses[i] = 50.0 - fitness(previous[i]);
 	}
 
+
         pear *af =
             malloc(length*sizeof(pear));
         for (i = 0; i < length; i++) {
@@ -438,6 +439,7 @@ arrangement** generate(arrangement **previous, int length, float mutationRate, i
         qsort(af, length, sizeof(pear), compareFitness);
         for (i = 0; i < length; i++)
             previous[i] = af[i].a;
+
 
 	int j = 0;
 	for(i = length - 1; i > 0 ; i --) {

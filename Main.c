@@ -30,7 +30,6 @@ int main(int argc, char **argv) {
     }
     for(i = 0; i < n_generations; i++) {
         arrangement **new = generate(old, generation_size, 0.05, generation_size / 100 );
-        printf("darn\n");
         int j;
         for(j = 0; j < generation_size; j++) {
             freeArrangement(old[j]);
