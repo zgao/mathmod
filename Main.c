@@ -37,6 +37,7 @@ int main(int argc, char **argv) {
         old[i] = createRandomArrangement();
     }
     for(i = 0; i < n_generations; i++) {
+        printf("%d\n", i);
         arrangement **new = generate(old, generation_size, 0.05, generation_size / 100 );
         int j;
         for(j = 0; j < generation_size; j++) {

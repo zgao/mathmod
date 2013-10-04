@@ -108,6 +108,11 @@ point* paintings(arrangement *a, point *c) {
 point* corners(arrangement *a) {
     int num_points = 0;
     point *ret = (point*) malloc(sizeof(point) * 100);
+    int i;
+    for (i = 0; i < 100; i++) {
+        ret[i].x = ret[i].y = 0.0;
+        ret[i].next = NULL;
+    }
     wallList *wl;
     for (wl = a->walls; wl != NULL; wl = wl->next) {
         wall *first = wl->value;
@@ -121,7 +126,6 @@ point* corners(arrangement *a) {
         }
     }
 
-    int i;
     for (i = 0; i < num_points - 1; i++) ret[i].next = ret + i + 1;
     ret[num_points - 1].next = NULL;
 
@@ -157,16 +161,17 @@ graph_wrapper graph_of_arrangement(arrangement *a, point *c, point *p) {
         graph[graph_size] = make_new_node(graph_size++, 2, n_vertices);
 
     for (i = 0; i < 50; i++) {
-        int j;
-        for (j = 0; j < n_corners; j++) {
+        int j = 0;
+        point *cj;
+        for (cj = c; cj != NULL; cj = cj->next, j++) {
             if (no_inter(a,
                         p[i].x, p[i].y,
-                        c[j].x, c[j].y)) {
+                        cj->x, cj->y)) {
                 //printf("painting %d -> corner %d\n", i, j);
                 make_new_edge(graph, i, j + 50,
                         hypot(
-                            p[i].x - c[j].x,
-                            p[i].y - c[j].y
+                            p[i].x - cj->x,
+                            p[i].y - cj->y
                             ));
             }
         }
@@ -183,27 +188,30 @@ graph_wrapper graph_of_arrangement(arrangement *a, point *c, point *p) {
             }
         }
     }
-    for (i = 0; i < n_corners; i++) {
-        int j;
-        for (j = i + 1; j < n_corners; j++) {
-            if (no_inter(a, c[i].x, c[i].y,
-                        c[j].x, c[j].y)) {
+    i = 0;
+    point *ci;
+    for (ci = c; ci != NULL; ci = ci->next, i++) {
+        int j = 0;
+        point *cj;
+        for (cj = ci->next; cj != NULL; cj = cj->next, j++) {
+            if (no_inter(a, ci->x, ci->y,
+                        cj->x, cj->y)) {
                 //printf("corner %d -> corner %d\n", i, j);
                 make_new_edge(graph, i + 50, j + 50,
                         hypot(
-                            c[i].x - c[j].x,
-                            c[i].y - c[j].y
+                            ci->x - cj->x,
+                            ci->y - cj->y
                             ));
             }
         }
         for (j = 0; j < 4; j++) {
-            if (no_inter(a, c[i].x, c[i].y,
+            if (no_inter(a, ci->x, ci->y,
                         doors[j][0], doors[j][1])) {
                 //printf("corner %d -> door %d\n", i, j);
                 make_new_edge(graph, i + 50, j + 50 + n_corners,
                         hypot(
-                            c[i].x - doors[j][0],
-                            c[i].y - doors[j][1]
+                            ci->x - doors[j][0],
+                            ci->y - doors[j][1]
                             ));
             }
         }

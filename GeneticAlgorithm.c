@@ -61,10 +61,11 @@ int compare(const void *a, const void *b) {
 }
 
 double fitness(arrangement *a) {
+        if (a->walls == NULL) return 0.0;
 	point *corns = corners(a);
 	point *paint = paintings(a, corns);
 	if (paint == NULL) {
-		puts("PAINT IS NULL");
+		//puts("PAINT IS NULL");
 		return 0.0;
 	}
 	graph_wrapper G = graph_of_arrangement(a, paint, corns);
@@ -75,8 +76,8 @@ double fitness(arrangement *a) {
 		double *routes = shortest_paths(G.graph, i, G.size);
 		double dist = min(routes[G.size - 1], routes[G.size - 2], routes[G.size - 3], routes[G.size - 4]);
 		securities[i] = dist / (timeBetweenSight(seenByCamera(current -> x, current -> y, 1, a), seenByCamera(current -> x, current -> y, 2, a) , current -> x, current -> y));
-                qsort(securities, 50, sizeof(double), compare);
 	}
+        qsort(securities, 50, sizeof(double), compare);
 	double out = 0;
 	double top = 6*RUNNING_SD + RUNNING_MEAN;
 	double segmentLength = top / (double)NUMBER_OF_SEGMENTS;
@@ -420,10 +421,17 @@ arrangement** generate(arrangement **previous, int length, float mutationRate, i
 	double *fitnesses = malloc(length*sizeof(double));
 	arrangement **out = malloc(length*sizeof(arrangement*));
 	int i;
+        int nonzero = 0;
 	//#pragma omp parallel for
 	for(i = 0; i < length; i++) {
+            if (previous[i] == NULL) {
+                printf("NULL PREV %d\n", i);
+            }
+            if (fitness(previous[i]) > 0.0) nonzero++;
 		fitnesses[i] = 50.0 - fitness(previous[i]);
 	}
+
+        printf("nonzero: %d\n", nonzero);
 
         pear *af =
             malloc(length*sizeof(pear));
