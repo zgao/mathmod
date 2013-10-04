@@ -85,7 +85,7 @@ void destroy_graph(vector<node*> *gw) {
     vector<node*> unw = *gw;
     int i;
     for (i = 0; i < unw.size(); i++) {
-        free(unw[i]->edges);
-        free(unw[i]->weights);
+        delete unw[i]->edges;
+        delete unw[i]->weights;
     }
 }

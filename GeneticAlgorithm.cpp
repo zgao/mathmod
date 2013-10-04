@@ -126,6 +126,7 @@ double fitness(arrangement *a) {
         //printf("%lf\n", dist);
         point current = paint[i];
         securities[i] = dist / (timeBetweenSight(seenByCamera(current.x, current.y, 1, a), seenByCamera(current.x, current.y, 2, a) , current.x, current.y));
+        free(routes);
     }
     qsort(securities, 50, sizeof(double), compare);
     double out = 0;
@@ -138,6 +139,7 @@ double fitness(arrangement *a) {
     }
     out *= segmentLength;
 
+    free(securities);
     destroy_graph(G);
 
     return out;
