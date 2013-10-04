@@ -12,7 +12,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <vector>
-//#include <omp.h>
+#include <omp.h>
 #include "geo.h"
 #include "graph.h"
 
@@ -106,12 +106,12 @@ double fitness(arrangement *a) {
         return 0.0;
     }
     vector<point> corns = *c;
-    /*
+    
     for (int i = 0; i < corns.size(); i++)
         for (int j = i + 1; j < corns.size(); j++) {
-            if (hypot(corns[i].x - corns[j].x, corns[i].y - corns[j].y) < 4.999)
+            if (hypot(corns[i].x - corns[j].x, corns[i].y - corns[j].y) < 2.000)
                 return 0.0;
-        }*/
+        }
     vector<point> paint = *p;
     //printf("next size of c is %d\n", (int) c->size());
     vector<node*> *G = graph_of_arrangement(a, c, p);
@@ -394,7 +394,7 @@ arrangement** generate(arrangement **previous, int length, float mutationRate, i
     arrangement **out = (arrangement**) malloc(length*sizeof(arrangement*));
     int i;
     int nonzero = 0;
-    //#pragma omp parallel for
+    #pragma omp parallel for
     for(i = 0; i < length; i++) {
         if (previous[i] == NULL) {
             printf("NULL PREV %d\n", i);
