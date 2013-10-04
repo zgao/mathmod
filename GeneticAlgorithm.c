@@ -65,6 +65,11 @@ int compare(const void *a, const void *b) {
 
 double fitness(arrangement *a) {
         if (a->walls == NULL) return 0.0;
+        wallList *wl;
+        for (wl = a->walls; wl != NULL; wl = wl->next) {
+            if (wl->value == NULL) return 0.0;
+        }
+        printf("%p\n", a->walls);
 	point *corns = corners(a);
 	point *paint = paintings(a, corns);
 	if (paint == NULL) {

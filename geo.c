@@ -55,10 +55,10 @@ point* paintings(arrangement *a, point *c) {
     point *ret = (point*) malloc(sizeof(point) * 50);
     int paintings_placed = 0;
 
-    wallList *wl;
+    wallList *wl = a->walls;
     for (wl = a->walls; wl != NULL; wl = wl->next) {
         wall *first = wl->value;
-        wall *second = first-> child;
+        wall *second = first->child;
         for (second = first->child; second != NULL;
                 first = first->child, second = second->child) {
             double epsilon = 1e-2;
@@ -117,6 +117,8 @@ point* corners(arrangement *a) {
     }
     wallList *wl;
     for (wl = a->walls; wl != NULL; wl = wl->next) {
+        printf("a walls %p\n", a->walls);
+        printf("value %p\n", wl->value);
         wall *first = wl->value;
         wall *second = first->child;
         ret[num_points].x = first->x_pos;
