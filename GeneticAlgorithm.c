@@ -50,8 +50,11 @@ double normalDF(double x) {
 
 int f(double *securities, double speed) {
 	int j = 0;
-	while(securities[j] < speed && j < 49) {
-		j ++;
+	int i = 0;
+	for(i = 0; i < 50; i ++) {
+		if(securities[i] < speed) {
+			j++;
+		}
 	}
 	return j;
 }
