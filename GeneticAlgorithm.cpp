@@ -79,7 +79,7 @@ double fitness(arrangement *a) {
     vector<point> corns = *c;
     for (int i = 0; i < corns.size(); i++)
         for (int j = i + 1; j < corns.size(); j++) {
-            if (hypot(corns[i].x - corns[j].x, corns[i].y - corns[j].y) < 2.0)
+            if (hypot(corns[i].x - corns[j].x, corns[i].y - corns[j].y) < 4.999)
                 return 0.0;
         }
     vector<point> paint = *p;
