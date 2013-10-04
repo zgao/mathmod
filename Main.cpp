@@ -62,6 +62,7 @@ int main(int argc, char **argv) {
     }
     qsort(af, generation_size, sizeof(pear), compareFitness2);
     printArrangement(af[0].a);
+    printf("FITNESS: %lf\n", af[0].fitness);
     //int i, j;
     //for (i = 0; i < 8; i++) {
     //printf("arrangement\n");
