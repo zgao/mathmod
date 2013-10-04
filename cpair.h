@@ -4,6 +4,6 @@
 typedef struct {
     double first;
     int second;
-} pair;
+} cpair;
 
 #endif

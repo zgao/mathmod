@@ -1,8 +1,10 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <assert.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cassert>
 
 #include "graph.h"
+
+using namespace std;
 
 #define infinity 1e9
 
@@ -24,7 +26,8 @@ node make_new_node(int id, int flag, int sz) {
     return n;
 }
 
-void make_new_edge(node *all, int i, int j, double weight) {
+void make_new_edge(vector<node> *all_nodes, int i, int j, double weight) {
+    vector<node> all = *all_nodes;
     //printf("Set %d <-> %d to weight %lf\n", i, j, weight);
     int sz_i = all[i].num_edges++, sz_j = all[j].num_edges++;
     all[i].edges[sz_i] = all[j];
@@ -33,7 +36,9 @@ void make_new_edge(node *all, int i, int j, double weight) {
     all[j].weights[sz_j] = weight;
 }
 
-double* shortest_paths(node *all_nodes, int source, int sz) {
+double* shortest_paths(vector<node> *all, int source, int sz) {
+    vector<node> all_nodes = *all;
+
     heap *pq = make_heap(sz);
     pq->size = sz;
     double *ret = (double*) malloc(sizeof(double) * sz);
@@ -59,7 +64,7 @@ double* shortest_paths(node *all_nodes, int source, int sz) {
     }*/
 
     while (!empty(pq)) {
-        pair p = pop(pq);
+        cpair p = pop(pq);
         int now = p.second;
         ret[now] = p.first;
 
@@ -86,10 +91,11 @@ double* shortest_paths(node *all_nodes, int source, int sz) {
     return ret;
 }
 
-void destroy_graph(graph_wrapper gw) {
+void destroy_graph(vector<node> *gw) {
+    vector<node> unw = *gw;
     int i;
-    for (i = 0; i < gw.size; i++) {
-        free(gw.graph[i].edges);
-        free(gw.graph[i].weights);
+    for (i = 0; i < unw.size(); i++) {
+        free(unw[i].edges);
+        free(unw[i].weights);
     }
 }

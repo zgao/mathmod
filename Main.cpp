@@ -2,17 +2,21 @@
 #include "GeneticAlgorithm.h"
 #include "Camera.h"
 #include "geo.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <math.h>
+#include <cstdio>
+#include <cstdlib>
+#include <ctime>
+#include <cmath>
 
+#ifndef PAIR_H_ADDED
+#define PAIR_H_ADDED
 
-graph_wrapper atog(arrangement *a) {
-    point *c = corners(a);
-    point *p = paintings(a, c);
-    return graph_of_arrangement(a, c, p);
-}
+typedef struct {
+    double first;
+    int second;
+} cpair;
+
+#endif
+
 int compareFitness2(const void *a, const void *b) {
     pear
         aa = *(pear*)a,
@@ -30,28 +34,28 @@ int main(int argc, char **argv) {
     srand(time(NULL));
 
     printArrangement(createRandomArrangement());
-	
-    arrangement **old = malloc(generation_size*sizeof(arrangement*));
+
+    arrangement **old = (arrangement**) malloc(generation_size*sizeof(arrangement*));
     int i;
     for(i = 0; i < generation_size; i++) {
         old[i] = createRandomArrangement();
     }
     for(i = 0; i < n_generations; i++) {
         printf("%d\n", i);
-        arrangement **new = generate(old, generation_size, 0.05, generation_size / 100 );
+        arrangement **next = generate(old, generation_size, 0.05, generation_size / 100 );
         int j;
         for(j = 0; j < generation_size; j++) {
             //freeArrangement(old[j]);
         }
         //free(old);
-        old = new;
+        old = next;
     }
-    double *fitnesses = malloc(generation_size*(sizeof(double)));
+    double *fitnesses = (double*) malloc(generation_size*(sizeof(double)));
     for(i = 0; i < generation_size; i ++) {
         fitnesses[i] = 50 - fitness(old[i]);
     }
 
-    pear *af = malloc(generation_size*sizeof(pear));
+    pear *af = (pear*) malloc(generation_size*sizeof(pear));
     for (i = 0; i < generation_size; i++) {
         af[i].a = old[i];
         af[i].fitness = fitnesses[i];

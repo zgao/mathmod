@@ -10,7 +10,7 @@ typedef struct {
 
 double angleFromCamera(double x, double y, int cam);
 bool seenByCamera(double x, double y, int cam, arrangement *a);
-pt wallIntersectSightLine(wall *w, int cam, double x, double y);
+pt wallIntersectSightLine(wallSequence *w, int cam, double x, double y);
 double timeBetweenSight(bool sb1, bool sb2, double x, double y);
 
 

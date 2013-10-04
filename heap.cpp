@@ -1,7 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
 #include "heap.h"
+
+using namespace std;
 
 inline int left(int i) { return 2 * i + 1; }
 inline int right(int i) { return 2 * i + 2; }
@@ -86,8 +88,8 @@ int empty(heap *h) {
     return h->size == 0;
 }
 
-pair pop(heap *h) {
-    pair p;
+cpair pop(heap *h) {
+    cpair p;
     p.first = h->val[0];
     p.second = h->id[0];
     heap_swap(h, 0, h->size - 1);

@@ -1,7 +1,7 @@
 #ifndef HEAP_H_ADDED
 #define HEAP_H_ADDED
 
-#include "pair.h"
+#include "cpair.h"
 
 typedef struct {
     int size, maxsz;
@@ -18,7 +18,7 @@ void heap_swap      (heap *h, int i, int j);
 void heap_up        (heap *h, int i);
 void heap_down      (heap *h, int i);
 int empty           (heap *h);
-pair pop            (heap *h);
+cpair pop           (heap *h);
 void update         (heap *h, int q, double newval);
 
 #endif
