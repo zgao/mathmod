@@ -50,8 +50,11 @@ double normalDF(double x) {
 
 int f(double *securities, double speed) {
 	int j = 0;
-	while(securities[j] < speed && j < 49) {
-		j ++;
+	int i = 0;
+	for(i = 0; i < 50; i ++) {
+		if(securities[i] < speed) {
+			j++;
+		}
 	}
 	return j;
 }
@@ -75,8 +78,8 @@ double fitness(arrangement *a) {
 		double *routes = shortest_paths(G.graph, i, G.size);
 		double dist = min(routes[G.size - 1], routes[G.size - 2], routes[G.size - 3], routes[G.size - 4]);
 		securities[i] = dist / (timeBetweenSight(seenByCamera(current -> x, current -> y, 1, a), seenByCamera(current -> x, current -> y, 2, a) , current -> x, current -> y));
-                qsort(securities, 50, sizeof(double), compare);
 	}
+        qsort(securities, 50, sizeof(double), compare);
 	double out = 0;
 	double top = 6*RUNNING_SD + RUNNING_MEAN;
 	double segmentLength = top / (double)NUMBER_OF_SEGMENTS;
