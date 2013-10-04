@@ -16,5 +16,6 @@ typedef deque<wallSequence> arrangement;
 
 wallSequence* randomWall(int length, double startx, double starty, double angleOffset, deque<wall> *existing);
 arrangement* createRandomArrangement();
+int numberOfWalls(arrangement *a);
 
 #endif

@@ -46,8 +46,10 @@ int works(vector<point> *corners, double x, double y) {
 }
 
 vector<point>* paintings(arrangement *a, vector<point> *c) {
+    //printArrangement(a);
+    //printf("%d walls\n", numberOfWalls(a));
+
     vector<point> *ret = new vector<point>();
-    int paintings_placed = 0;
 
     for (arrangement::iterator wp = a->begin(); wp != a->end(); wp++) {
         wallSequence ws = *wp;
@@ -82,11 +84,6 @@ vector<point>* paintings(arrangement *a, vector<point> *c) {
     while (ret->size() < 50) {
         ctr++;
 
-        if (ctr == 36) {
-            //printf("returning null now\n");
-            return NULL;
-        }
-
         i %= 4;
         if (works(c, counters_x[i], counters_y[i])) {
             point next;
@@ -95,11 +92,19 @@ vector<point>* paintings(arrangement *a, vector<point> *c) {
             ret->push_back(next);
             //printf("%lf %lf\n", counters_x[i], counters_y[i]);
         }
+
+        if (ctr == 32) {
+            //printf("returning null now\n");
+            //printf("%d\n", (int) ret->size());
+            return NULL;
+        }
+
         counters_x[i] += dx[i];
         counters_y[i] += dy[i];
         i++;
     }
 
+    printf("returning not null\n");
     return ret;
 }
 

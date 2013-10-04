@@ -5,6 +5,7 @@
 
 #include "graph.h"
 #include "GalleryArrangement.h"
+#include "GeneticAlgorithm.h"
 
 using namespace std;
 

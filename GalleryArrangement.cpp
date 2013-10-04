@@ -45,10 +45,17 @@ arrangement* createRandomArrangement() {
         wallSequence *addValue = NULL;
         while (!addValue || addValue->size() < 2) {
             if (addValue) delete addValue;
-            addValue = randomWall(2 + rand() % 5, 22.0* (double)rand()/(double)RAND_MAX,20.0*(double)rand()/(double)RAND_MAX , 0.0);
+            addValue = randomWall(2 + rand() % GLOBAL_MOD, 22.0* (double)rand()/(double)RAND_MAX,20.0*(double)rand()/(double)RAND_MAX , 0.0);
         }
         out->push_back(*addValue);
     }
     return out;
 }
 
+int numberOfWalls(arrangement *a) {
+    int num = 0;
+    for (arrangement::iterator wp = a->begin(); wp != a->end(); wp++) {
+        num += wp->size() - 1;
+    }
+    return num;
+}
