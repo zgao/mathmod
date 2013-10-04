@@ -15,6 +15,6 @@ typedef struct point {
 
 vector<point>* corners(arrangement *a);
 vector<point>* paintings(arrangement *a, vector<point> *c);
-vector<node>* graph_of_arrangement(arrangement *a, vector<point> *c, vector<point> *p);
+vector<node*>* graph_of_arrangement(arrangement *a, vector<point> *c, vector<point> *p);
 
 #endif

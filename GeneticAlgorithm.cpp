@@ -71,13 +71,15 @@ double fitness(arrangement *a) {
         return 0.0;
     }
     vector<point> *c = corners(a);
+    //printf("size of c is %d\n", (int) c->size());
     vector<point> *p = paintings(a, c);
     if (p == NULL) {
         return 0.0;
     }
     vector<point> corns = *c;
     vector<point> paint = *p;
-    vector<node> *G = graph_of_arrangement(a, c, p);
+    //printf("next size of c is %d\n", (int) c->size());
+    vector<node*> *G = graph_of_arrangement(a, c, p);
     double *securities = (double*) malloc(50*sizeof(double));
     int i;
     for(i = 0; i < 50; i++) {
@@ -86,6 +88,7 @@ double fitness(arrangement *a) {
                 routes[G->size() - 2],
                 routes[G->size() - 3],
                 routes[G->size() - 4]);
+        //printf("%lf\n", dist);
         point current = paint[i];
         securities[i] = dist / (timeBetweenSight(seenByCamera(current.x, current.y, 1, a), seenByCamera(current.x, current.y, 2, a) , current.x, current.y));
     }

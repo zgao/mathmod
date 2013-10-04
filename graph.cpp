@@ -8,36 +8,25 @@ using namespace std;
 
 #define infinity 1e9
 
-node* make_sample_graph(int sz) {
-    node *ret = (node*) malloc(sizeof(node) * sz);
-    int i;
-    for (i = 0; i < sz; i++)
-        ret[i] = make_new_node(i, 1, sz);
-    return ret;
-}
-
-node make_new_node(int id, int flag, int sz) {
-    node n;
-    n.id = id;
-    n.flag = flag;
-    n.num_edges = 0;
-    n.edges = (node*) malloc(sizeof(node) * sz);
-    n.weights = (double*) malloc(sizeof(node) * sz);
+node* make_new_node(int id, int flag, int sz) {
+    node *n = (node*) malloc(sizeof(node));
+    n->id = id;
+    n->flag = flag;
+    n->edges = new vector<node*>();
+    n->weights = new vector<double>();
     return n;
 }
 
-void make_new_edge(vector<node> *all_nodes, int i, int j, double weight) {
-    vector<node> all = *all_nodes;
-    //printf("Set %d <-> %d to weight %lf\n", i, j, weight);
-    int sz_i = all[i].num_edges++, sz_j = all[j].num_edges++;
-    all[i].edges[sz_i] = all[j];
-    all[j].edges[sz_j] = all[i];
-    all[i].weights[sz_i] = weight;
-    all[j].weights[sz_j] = weight;
+void make_new_edge(vector<node*> *all_nodes, int i, int j, double weight) {
+    vector<node*> all = *all_nodes;
+    all[i]->edges->push_back(all[j]);
+    all[j]->edges->push_back(all[i]);
+    all[i]->weights->push_back(weight);
+    all[j]->weights->push_back(weight);
 }
 
-double* shortest_paths(vector<node> *all, int source, int sz) {
-    vector<node> all_nodes = *all;
+double* shortest_paths(vector<node*> *all, int source, int sz) {
+    vector<node*> all_nodes = *all;
 
     heap *pq = make_heap(sz);
     pq->size = sz;
@@ -70,12 +59,13 @@ double* shortest_paths(vector<node> *all, int source, int sz) {
 
         //printf("Got here: %d at dist %lf\n", p.second, p.first);
 
-        node this_node = all_nodes[now];
+        node this_node = *(all_nodes[now]);
         seen[now] = 1;
-        for (i = 0; i < this_node.num_edges; i++) {
-            node next = this_node.edges[i];
+        vector<node*> e = *(this_node.edges);
+        for (i = 0; i < this_node.edges->size(); i++) {
+            node next = *e[i];
             if (!seen[next.id]) {
-                double dist = this_node.weights[i];
+                double dist = (*this_node.weights)[i];
                 if (ret[now] + dist < ret[next.id]) {
                     ret[next.id] = ret[now] + dist;
                     //printf("updating: %d %lf\n", next.id, ret[next.id]);
@@ -91,11 +81,11 @@ double* shortest_paths(vector<node> *all, int source, int sz) {
     return ret;
 }
 
-void destroy_graph(vector<node> *gw) {
-    vector<node> unw = *gw;
+void destroy_graph(vector<node*> *gw) {
+    vector<node*> unw = *gw;
     int i;
     for (i = 0; i < unw.size(); i++) {
-        free(unw[i].edges);
-        free(unw[i].weights);
+        free(unw[i]->edges);
+        free(unw[i]->weights);
     }
 }

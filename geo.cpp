@@ -31,8 +31,10 @@ int no_inter(arrangement *a, double x1, double y1, double x2, double y2) {
         wallSequence ws = *it;
         for (int i = 0; i < ws.size() - 1; i++) {
             if (ls_inter(x1, y1, x2, y2,
-                        ws[i]->x_pos, ws[i]->y_pos, ws[i + 1]->x_pos, ws[i + 1]->y_pos))
+                        ws[i]->x_pos, ws[i]->y_pos, ws[i + 1]->x_pos, ws[i + 1]->y_pos)) {
+                //printf("inter\n");
                 return 0;
+            }
         }
     }
     return 1;
@@ -104,7 +106,7 @@ vector<point>* paintings(arrangement *a, vector<point> *c) {
         i++;
     }
 
-    printf("returning not null\n");
+    //printf("returning not null\n");
     return ret;
 }
 
@@ -118,12 +120,14 @@ vector<point>* corners(arrangement *a) {
             point p;
             p.x = w->x_pos;
             p.y = w->y_pos;
+            ret->push_back(p);
         }
     }
+    //printf("size of ret is %d\n", (int) ret->size());
     return ret;
 }
 
-vector<node>* graph_of_arrangement(arrangement *a, vector<point> *cc, vector<point> *pp) {
+vector<node*>* graph_of_arrangement(arrangement *a, vector<point> *cc, vector<point> *pp) {
     vector<point> p = *pp;
     vector<point> c = *cc;
 
@@ -142,7 +146,7 @@ vector<node>* graph_of_arrangement(arrangement *a, vector<point> *cc, vector<poi
 
     int n_vertices = 54 + n_corners;
 
-    vector<node> *graph = new vector<node>();
+    vector<node*> *graph = new vector<node*>();
     for (int i = 0; i < 50; i++)
         graph->push_back(make_new_node(graph->size(), 1, n_vertices));
     for (int i = 0; i < n_corners; i++)
@@ -152,16 +156,12 @@ vector<node>* graph_of_arrangement(arrangement *a, vector<point> *cc, vector<poi
 
     for (int i = 0; i < 50; i++) {
         int j = 0;
-        for (vector<point>::iterator cj = c.begin(); cj != c.end(); cj++) {
+        for (vector<point>::iterator cj = c.begin(); cj != c.end(); cj++, j++) {
             if (no_inter(a,
                         p[i].x, p[i].y,
                         cj->x, cj->y)) {
                 //printf("painting %d -> corner %d\n", i, j);
-                make_new_edge(graph, i, j + 50,
-                        hypot(
-                            p[i].x - cj->x,
-                            p[i].y - cj->y
-                            ));
+                make_new_edge(graph, i, j + 50, hypot(p[i].x - cj->x, p[i].y - cj->y));
             }
         }
         for (j = 0; j < 4; j++) {
