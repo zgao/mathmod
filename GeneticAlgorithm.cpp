@@ -65,10 +65,39 @@ int compare(const void *a, const void *b) {
     return (*((double*)a) > *((double*)b));
 }
 
+bool intersect(wallSequence *a, wallSequence *b) {
+    wallSequence as = *a, bs = *b;
+    for (int i = 0; i < as.size() - 1; i++)
+        for (int j = 0; j < bs.size() - 1; j++) {
+            if (ls_inter(as[i]->x_pos, as[i]->y_pos, as[i + 1]->x_pos, as[i + 1]->y_pos,
+                        bs[j]->x_pos, bs[j]->y_pos, bs[j + 1]->x_pos, bs[j + 1]->y_pos))
+                return true;
+        }
+    return false;
+}
+
+bool selfIntersect(wallSequence *a) {
+    wallSequence as = *a;
+    for (int i = 0; i < as.size(); i++)
+        for (int j = i + 1; j < as.size(); j++)
+            if (hypot(as[i]->x_pos - as[j]->x_pos, as[i]->y_pos - as[j]->y_pos) < 3.54)
+                return true;
+    return false;
+}
+
 double fitness(arrangement *a) {
     arrangement pa = *a;
     if (!a) {
         return 0.0;
+    }
+    for (arrangement::iterator it = a->begin(); it != a->end(); it++) {
+        wallSequence ws = *it;
+        if (selfIntersect(&ws)) return 0.0;
+        for (arrangement::iterator it2 = it + 1; it2 != a->end(); it2++) {
+            if (intersect(&ws, &*it2)) {
+                return 0.0;
+            }
+        }
     }
     vector<point> *c = corners(a);
     //printf("size of c is %d\n", (int) c->size());
@@ -77,11 +106,12 @@ double fitness(arrangement *a) {
         return 0.0;
     }
     vector<point> corns = *c;
+    /*
     for (int i = 0; i < corns.size(); i++)
         for (int j = i + 1; j < corns.size(); j++) {
             if (hypot(corns[i].x - corns[j].x, corns[i].y - corns[j].y) < 4.999)
                 return 0.0;
-        }
+        }*/
     vector<point> paint = *p;
     //printf("next size of c is %d\n", (int) c->size());
     vector<node*> *G = graph_of_arrangement(a, c, p);
@@ -382,6 +412,7 @@ arrangement** generate(arrangement **previous, int length, float mutationRate, i
         af[i].fitness = fitnesses[i];
     }
     qsort(af, length, sizeof(pear), compareFitness);
+    printf("Best: %lf\n", af[0].fitness);
     for (i = 0; i < length; i++)
         previous[i] = af[i].a;
 
