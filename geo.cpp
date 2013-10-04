@@ -58,15 +58,16 @@ vector<point>* paintings(arrangement *a, vector<point> *c) {
             double y_delta = second->x_pos - first->x_pos;
             double x_pos = (first->x_pos + second->x_pos) / 2.;
             double y_pos = (first->y_pos + second->y_pos) / 2.;
+            //printf("2 paintings placed %lf %lf\n", x_pos, y_pos);
             point new1, new2;
             new1.x = x_pos + epsilon * x_delta;
             new1.y = y_pos + epsilon * y_delta;
             ret->push_back(new1);
-            if (paintings_placed == 50) break;
+            if (ret->size() == 50) break;
             new2.x = x_pos - epsilon * x_delta;
             new2.y = y_pos - epsilon * y_delta;
             ret->push_back(new2);
-            if (paintings_placed == 50) break;
+            if (ret->size() == 50) break;
         }
     }
 
@@ -78,11 +79,11 @@ vector<point>* paintings(arrangement *a, vector<point> *c) {
 
     int ctr = 0;
 
-    while (paintings_placed < 50) {
+    while (ret->size() < 50) {
         ctr++;
 
-        if (ctr == 32) {
-            printf("returning null now\n");
+        if (ctr == 36) {
+            //printf("returning null now\n");
             return NULL;
         }
 
