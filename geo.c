@@ -68,8 +68,10 @@ point* paintings(arrangement *a, point *c) {
             double y_pos = (first->y_pos + second->y_pos) / 2.;
             ret[paintings_placed].x = x_pos + epsilon * x_delta;
             ret[paintings_placed++].y = y_pos + epsilon * y_delta;
+            if (paintings_placed == 50) break;
             ret[paintings_placed].x = x_pos - epsilon * x_delta;
             ret[paintings_placed++].y = y_pos - epsilon * y_delta;
+            if (paintings_placed == 50) break;
         }
     }
 
